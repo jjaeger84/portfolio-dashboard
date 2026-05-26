@@ -7,27 +7,15 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     :root {
-      --bg: #0d1117;
-      --bg2: #161b22;
-      --card: #1c2128;
-      --border: #30363d;
-      --text: #e6edf3;
-      --muted: #8b949e;
-      --green: #3fb950;
-      --red: #f85149;
-      --blue: #58a6ff;
-      --gold: #d29922;
-      --purple: #bc8cff;
+      --bg: #0d1117; --bg2: #161b22; --card: #1c2128; --border: #30363d;
+      --text: #e6edf3; --muted: #8b949e;
+      --green: #3fb950; --red: #f85149; --blue: #58a6ff;
+      --gold: #d29922; --purple: #bc8cff;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-    /* HEADER */
-    .header {
-      background: var(--bg2); border-bottom: 1px solid var(--border);
-      padding: 14px 24px; display: flex; align-items: center;
-      justify-content: space-between; position: sticky; top: 0; z-index: 100;
-    }
+    .header { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
     .header-left { display: flex; align-items: center; gap: 10px; }
     .header-left h1 { font-size: 17px; font-weight: 600; }
     .header-right { display: flex; align-items: center; gap: 14px; }
@@ -37,17 +25,15 @@
     .btn { background: #238636; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; transition: opacity .2s; }
     .btn:hover { opacity: .8; }
 
-    /* CONTAINER */
     .container { max-width: 1200px; margin: 0 auto; padding: 24px 16px; }
 
-    /* SUMMARY */
-    .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-bottom: 24px; }
+    .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 24px; }
     .kpi { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; }
     .kpi-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
-    .kpi-value { font-size: 26px; font-weight: 700; line-height: 1; }
+    .kpi-value { font-size: 24px; font-weight: 700; line-height: 1; }
     .kpi-sub { font-size: 12px; color: var(--muted); margin-top: 5px; }
+    .kpi-change { font-size: 13px; font-weight: 600; margin-top: 4px; }
 
-    /* CHARTS */
     .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 28px; }
     @media(max-width:700px){ .charts { grid-template-columns: 1fr; } }
     .chart-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; }
@@ -55,23 +41,14 @@
     .chart-sub { font-size: 11px; color: var(--muted); margin-bottom: 14px; }
     .chart-wrap { position: relative; height: 210px; }
 
-    /* SECTION */
-    .section-head {
-      display: flex; align-items: center; gap: 10px;
-      margin: 30px 0 14px; padding-bottom: 12px; border-bottom: 1px solid var(--border);
-    }
+    .section-head { display: flex; align-items: center; gap: 10px; margin: 30px 0 14px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
     .section-head h2 { font-size: 15px; font-weight: 600; }
     .badge { background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; padding: 2px 10px; font-size: 11px; color: var(--muted); }
     .section-total { margin-left: auto; font-size: 15px; font-weight: 700; }
 
-    /* GRID */
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 12px; }
 
-    /* ASSET CARD */
-    .acard {
-      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-      padding: 16px; position: relative; overflow: hidden; transition: border-color .2s;
-    }
+    .acard { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; position: relative; overflow: hidden; transition: border-color .2s; }
     .acard:hover { border-color: var(--blue); }
     .acard::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; border-radius:12px 12px 0 0; }
     .acard.pos::before { background: var(--green); }
@@ -84,10 +61,10 @@
     .broker-tag { font-size: 10px; color: var(--muted); background: var(--bg2); border: 1px solid var(--border); padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
 
     .tipo { font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 2px 7px; border-radius: 4px; display: inline-block; margin-bottom: 10px; }
-    .tipo-acao { background: rgba(63,185,80,.15); color: var(--green); }
-    .tipo-etf  { background: rgba(88,166,255,.15); color: var(--blue); }
-    .tipo-cripto { background: rgba(210,153,34,.15); color: var(--gold); }
-    .tipo-cdb { background: rgba(188,140,255,.15); color: var(--purple); }
+    .tipo-acao   { background: rgba(63,185,80,.15);  color: var(--green);  }
+    .tipo-etf    { background: rgba(88,166,255,.15); color: var(--blue);   }
+    .tipo-cripto { background: rgba(210,153,34,.15); color: var(--gold);   }
+    .tipo-cdb    { background: rgba(188,140,255,.15);color: var(--purple); }
 
     .rows { display: flex; flex-direction: column; gap: 7px; }
     .row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
@@ -100,26 +77,20 @@
     .rendimento-val { font-size: 16px; font-weight: 700; }
 
     .tip { margin-top: 10px; font-size: 11px; color: var(--muted); line-height: 1.45; }
+    .live-badge { font-size: 9px; background: rgba(63,185,80,.15); color: var(--green); border-radius: 4px; padding: 1px 5px; vertical-align: middle; margin-left: 4px; }
 
     .pos { color: var(--green); }
     .neg { color: var(--red); }
 
-    /* DIDACTIC BOX */
     .info-box { background: rgba(88,166,255,.07); border: 1px solid rgba(88,166,255,.18); border-radius: 8px; padding: 10px 14px; font-size: 12px; color: var(--muted); margin-bottom: 14px; line-height: 1.5; }
     .info-box strong { color: var(--blue); }
 
-    /* LOADING */
     .spin { display: inline-block; width: 13px; height: 13px; border: 2px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; }
     @keyframes spin { to{transform:rotate(360deg)} }
 
-    /* FOOTER */
     footer { margin-top: 48px; padding: 24px; border-top: 1px solid var(--border); text-align: center; color: var(--muted); font-size: 12px; line-height: 1.7; }
 
-    @media(max-width:600px){
-      .grid { grid-template-columns: 1fr; }
-      .header-left h1 { font-size: 14px; }
-      .kpi-value { font-size: 22px; }
-    }
+    @media(max-width:600px){ .grid{grid-template-columns:1fr} .header-left h1{font-size:14px} .kpi-value{font-size:20px} }
   </style>
 </head>
 <body>
@@ -137,7 +108,6 @@
 
 <div class="container">
 
-  <!-- KPIs -->
   <div class="summary">
     <div class="kpi">
       <div class="kpi-label">💰 Patrimônio Total</div>
@@ -157,11 +127,20 @@
     <div class="kpi">
       <div class="kpi-label">💵 Dólar (USD/BRL)</div>
       <div class="kpi-value" id="kpi-usd"><span class="spin"></span></div>
-      <div class="kpi-sub" id="kpi-usd-sub">Cotação em tempo real</div>
+      <div class="kpi-sub">Cotação em tempo real</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">🇧🇷 Ganho/Perda Brasil</div>
+      <div class="kpi-value" id="kpi-ganho-br"><span class="spin"></span></div>
+      <div class="kpi-sub" id="kpi-ganho-br-sub">GOLD11 + PETR4</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">🇺🇸 Ganho/Perda Avenue</div>
+      <div class="kpi-value" id="kpi-ganho-av"><span class="spin"></span></div>
+      <div class="kpi-sub" id="kpi-ganho-av-sub">Ações + ETFs EUA</div>
     </div>
   </div>
 
-  <!-- CHARTS -->
   <div class="charts">
     <div class="chart-card">
       <h3>Alocação por Tipo de Investimento</h3>
@@ -191,11 +170,11 @@
   <div class="section-head">
     <span style="font-size:18px">🇺🇸</span>
     <h2>Ações — Estados Unidos (Avenue)</h2>
-    <span class="badge">5 ativos</span>
+    <span class="badge">5 ativos · tempo real</span>
     <span class="section-total" id="tot-av-ac">---</span>
   </div>
   <div class="info-box">
-    <strong>O que é isso?</strong> Ações de empresas americanas negociadas em dólar na bolsa dos EUA. Ao comprar, você vira sócio de gigantes como NVIDIA e Exxon. Os valores são em <strong>dólar (USD)</strong> e ficam expostos também à variação do câmbio. Os retornos mostrados são desde a data de compra.
+    <strong>O que é isso?</strong> Ações de empresas americanas negociadas em dólar na bolsa dos EUA. Os valores são calculados em tempo real: <strong>quantidade × preço atual</strong>, convertidos pelo câmbio do momento. O retorno mostra o ganho ou perda desde a sua compra.
   </div>
   <div class="grid" id="grid-av-ac"></div>
 
@@ -203,11 +182,11 @@
   <div class="section-head">
     <span style="font-size:18px">📦</span>
     <h2>ETFs — Estados Unidos (Avenue)</h2>
-    <span class="badge">13 ativos</span>
+    <span class="badge">13 ativos · tempo real</span>
     <span class="section-total" id="tot-av-etf">---</span>
   </div>
   <div class="info-box">
-    <strong>O que é isso?</strong> ETFs americanos funcionam igual aos brasileiros: uma cota = exposição a dezenas de empresas. O <strong>VOO</strong> replica as 500 maiores dos EUA, o <strong>QQQ</strong> replica a NASDAQ (tecnologia). São considerados investimentos de longo prazo, diversificados e com baixo custo. Valores em <strong>dólar (USD)</strong>.
+    <strong>O que é isso?</strong> ETFs americanos funcionam igual aos brasileiros: uma cota = exposição a dezenas de empresas. O <strong>VOO</strong> replica as 500 maiores dos EUA, o <strong>QQQ</strong> replica a NASDAQ. Valores calculados em tempo real: <strong>quantidade × preço atual × câmbio</strong>.
   </div>
   <div class="grid" id="grid-av-etf"></div>
 
@@ -219,7 +198,7 @@
     <span class="section-total">R$ 277.359,09</span>
   </div>
   <div class="info-box">
-    <strong>O que é isso?</strong> Renda fixa é como um empréstimo que você faz ao banco — em troca, ele paga juros. O <strong>CDB-DI</strong> rende conforme o CDI (próximo à Selic, hoje em ~10,5% ao ano). É mais seguro que ações pois a rentabilidade é previsível. Valores protegidos pelo <strong>FGC</strong> até R$ 250 mil por instituição.
+    <strong>O que é isso?</strong> Renda fixa é como um empréstimo que você faz ao banco — em troca, ele paga juros. O <strong>CDB-DI</strong> rende conforme o CDI (próximo à Selic, hoje ~10,5% ao ano). É mais seguro que ações pois a rentabilidade é previsível. Protegido pelo <strong>FGC</strong> até R$ 250 mil por instituição.
   </div>
   <div class="grid" id="grid-rf"></div>
 
@@ -227,107 +206,137 @@
   <div class="section-head">
     <span style="font-size:18px">₿</span>
     <h2>Criptomoedas</h2>
-    <span class="badge">Santander</span>
+    <span class="badge">Santander · tempo real</span>
     <span class="section-total" id="tot-crypto">---</span>
   </div>
   <div class="info-box">
-    <strong>O que é isso?</strong> Criptomoedas são moedas digitais descentralizadas (sem banco central). O <strong>Bitcoin (BTC)</strong> é o mais famoso e serve como reserva de valor digital. O <strong>Ethereum (ETH)</strong> é uma plataforma de contratos inteligentes. São ativos de <strong>alto risco</strong> — podem oscilar 10% ou mais em um único dia, para cima ou para baixo.
+    <strong>O que é isso?</strong> Criptomoedas são moedas digitais descentralizadas (sem banco central). O <strong>Bitcoin (BTC)</strong> é o mais famoso e serve como reserva de valor digital. O <strong>Ethereum (ETH)</strong> é uma plataforma de contratos inteligentes. São ativos de <strong>alto risco</strong> — podem oscilar muito em um único dia.
   </div>
   <div class="grid" id="grid-crypto"></div>
 
 </div>
 
 <footer>
-  <p>📡 Dados em tempo real: BRAPI (ações B3) · CoinGecko (cripto) · AwesomeAPI (câmbio)</p>
-  <p>Os valores da Avenue são baseados no snapshot de 25/05/2026, convertidos pela cotação atual do USD/BRL.</p>
-  <p style="margin-top:8px;font-size:11px;">Este dashboard é para acompanhamento pessoal e não constitui recomendação de investimento.</p>
+  <p>📡 Preços em tempo real: BRAPI (B3) · Yahoo Finance (EUA) · CoinGecko (cripto) · AwesomeAPI (câmbio)</p>
+  <p>Atualização automática a cada 60 segundos · Valores em BRL convertidos pela cotação atual do USD</p>
+  <p style="margin-top:8px;font-size:11px;">Dashboard para acompanhamento pessoal — não constitui recomendação de investimento.</p>
 </footer>
 
 <script>
 // ── DATA ─────────────────────────────────────────────────────────────────────
 const DATA = {
   brasil: [
-    { ticker:'GOLD11', nome:'Gold ETF (Ouro)', descricao:'ETF que acompanha o preço do ouro. Comprar uma cota é como ter ouro na carteira, sem precisar guardar fisicamente.', tipo:'ETF', corretora:'Santander', qtd:187, pm:27.14 },
-    { ticker:'PETR4',  nome:'Petrobras PN',    descricao:'Ação preferencial da Petrobras. Você é sócio de uma das maiores empresas do Brasil e pode receber dividendos.', tipo:'Ação', corretora:'Santander', qtd:53, pm:47.13 },
-    { ticker:'PETR4',  nome:'Petrobras PN',    descricao:'Mesma ação, mas comprada a um preço médio menor. Reduz o custo médio total da sua posição em PETR4.', tipo:'Ação', corretora:'Ion', qtd:68, pm:32.10 },
+    { ticker:'GOLD11', nome:'Gold ETF (Ouro)',  tipo:'ETF',  corretora:'Santander', qtd:187,    pm:27.14,
+      descricao:'ETF que acompanha o preço do ouro. Comprar uma cota é como ter ouro na carteira, sem precisar guardar fisicamente.' },
+    { ticker:'PETR4',  nome:'Petrobras PN',     tipo:'Ação', corretora:'Santander', qtd:53,     pm:47.13,
+      descricao:'Ação preferencial da Petrobras. Você é sócio de uma das maiores empresas do Brasil e pode receber dividendos.' },
+    { ticker:'PETR4',  nome:'Petrobras PN',     tipo:'Ação', corretora:'Ion',       qtd:68,     pm:32.10,
+      descricao:'Mesma ação da Petrobras, comprada a um preço médio menor na Ion. Reduz o custo médio total da posição.' },
   ],
   rendaFixa: [
-    { nome:'CDB-DI', descricao:'Rende conforme o CDI diariamente. Seguro, previsível e com liquidez diária. Protegido pelo FGC até R$ 250 mil.', corretora:'Santander', valorAtual:124765.20 },
-    { nome:'CDB DI Santander', descricao:'Produto de renda fixa com rendimento atrelado ao CDI. Rentabilidade de +2,41% no período de mar a mai/2026.', corretora:'Ion', valorAtual:152593.89 },
+    { nome:'CDB-DI', corretora:'Santander', valorAtual:124765.20,
+      descricao:'Rende conforme o CDI diariamente. Seguro, previsível e com liquidez diária. Protegido pelo FGC até R$ 250 mil.' },
+    { nome:'CDB DI Santander', corretora:'Ion', valorAtual:152593.89,
+      descricao:'CDB atrelado ao CDI, custodiado na Ion. Rentabilidade de +2,41% no período de março a maio/2026.' },
   ],
   crypto: [
-    { id:'bitcoin',  ticker:'BTC', nome:'Bitcoin',  descricao:'A maior criptomoeda do mundo por valor de mercado. Funciona como ouro digital — quantidade limitada a 21 milhões de unidades.', corretora:'Santander', qtd:0.01414331,  snapshotBRL:5513.40  },
-    { id:'ethereum', ticker:'ETH', nome:'Ethereum', descricao:'Segunda maior cripto. Plataforma que permite contratos inteligentes e aplicações financeiras descentralizadas (DeFi).', corretora:'Santander', qtd:0.18939318, snapshotBRL:2017.59  },
+    { id:'bitcoin',  ticker:'BTC', nome:'Bitcoin',  corretora:'Santander', qtd:0.01414331, snapshotBRL:5513.40,
+      descricao:'A maior criptomoeda do mundo por valor de mercado. Funciona como ouro digital — quantidade limitada a 21 milhões.' },
+    { id:'ethereum', ticker:'ETH', nome:'Ethereum', corretora:'Santander', qtd:0.18939318, snapshotBRL:2017.59,
+      descricao:'Segunda maior cripto. Plataforma que permite contratos inteligentes e aplicações financeiras descentralizadas.' },
   ],
   avenue: {
     acoes: [
-      { ticker:'NVDA',  nome:'NVIDIA Corp',      setor:'Tecnologia / IA',       descricao:'Líder mundial em chips para IA, data centers e jogos. Principal beneficiária do boom da inteligência artificial.', val:2511.78, ret:7.02  },
-      { ticker:'IONQ',  nome:'IonQ Inc',          setor:'Computação Quântica',   descricao:'Pioneira em computação quântica — tecnologia que pode superar os computadores tradicionais em certas tarefas complexas.', val:638.26,  ret:32.68 },
-      { ticker:'CCJ',   nome:'Cameco Corp',       setor:'Urânio',                descricao:'Uma das maiores produtoras de urânio do mundo. Beneficiada pelo renascimento da energia nuclear.', val:493.38,  ret:-1.33 },
-      { ticker:'XOM',   nome:'Exxon Mobil',       setor:'Energia / Petróleo',    descricao:'Uma das maiores petrolíferas e empresas do mundo. Paga dividendos consistentes há décadas.', val:462.54,  ret:2.79  },
-      { ticker:'UEC',   nome:'Uranium Energy',    setor:'Urânio',                descricao:'Empresa americana de extração e armazenamento de urânio. Aposta na demanda crescente por energia nuclear.', val:454.64,  ret:-2.18 },
+      { ticker:'NVDA', nome:'NVIDIA Corp',      setor:'Tecnologia / IA',    qtd:11.66481,  pm:201.20,  valSnapshot:2511.78,
+        descricao:'Líder mundial em chips para IA, data centers e jogos. Principal beneficiária do boom da inteligência artificial.' },
+      { ticker:'IONQ', nome:'IonQ Inc',          setor:'Comp. Quântica',     qtd:10.03232,  pm:47.95,   valSnapshot:638.26,
+        descricao:'Pioneira em computação quântica — tecnologia que pode superar computadores tradicionais em certas tarefas complexas.' },
+      { ticker:'CCJ',  nome:'Cameco Corp',       setor:'Urânio',             qtd:4.71142,   pm:106.13,  valSnapshot:493.38,
+        descricao:'Uma das maiores produtoras de urânio do mundo. Beneficiada pelo renascimento da energia nuclear.' },
+      { ticker:'XOM',  nome:'Exxon Mobil',       setor:'Energia / Petróleo', qtd:2.98665,   pm:150.67,  valSnapshot:462.54,
+        descricao:'Uma das maiores petrolíferas do mundo. Paga dividendos consistentes há décadas.' },
+      { ticker:'UEC',  nome:'Uranium Energy',    setor:'Urânio',             qtd:34.99905,  pm:13.28,   valSnapshot:454.64,
+        descricao:'Empresa americana de extração de urânio. Aposta na demanda crescente por energia nuclear limpa.' },
     ],
     etfs: [
-      { ticker:'VOO',   nome:'Vanguard S&P 500',          descricao:'Replica as 500 maiores empresas dos EUA. Considerado um dos melhores investimentos de longo prazo do mundo.', val:10654.50, ret:4.82   },
-      { ticker:'SCHD',  nome:'Schwab US Dividend',         descricao:'Focado em empresas americanas com histórico sólido de pagamento de dividendos. Ideal para renda passiva em dólar.', val:6512.73,  ret:4.72   },
-      { ticker:'SCHF',  nome:'Schwab Intl Equity',         descricao:'Ações de países desenvolvidos fora dos EUA: Europa, Japão, Austrália, etc. Diversificação geográfica.', val:5460.54,  ret:1.47   },
-      { ticker:'QQQ',   nome:'Invesco QQQ',                descricao:'Replica as 100 maiores da NASDAQ — majoritariamente tecnologia (Apple, Microsoft, Google, Meta, Amazon).', val:5102.21,  ret:8.56   },
-      { ticker:'REMX',  nome:'VanEck Rare Earth',          descricao:'Empresas de metais raros e estratégicos, essenciais para baterias, veículos elétricos e eletrônicos.', val:1489.84,  ret:-4.31  },
-      { ticker:'AIQ',   nome:'Global X AI & Tech',         descricao:'ETF focado em empresas líderes de Inteligência Artificial e tecnologia avançada globalmente.', val:1312.55,  ret:16.88  },
-      { ticker:'XLE',   nome:'Energy Select SPDR',         descricao:'Setor de energia americano: petróleo, gás natural e empresas energéticas. Tende a performar bem quando petróleo sobe.', val:1265.49,  ret:2.27   },
-      { ticker:'SHLD',  nome:'Global X Defense Tech',      descricao:'Empresas de defesa, aeroespacial e tecnologia militar. Demanda crescente em contexto geopolítico global.', val:749.06,   ret:-11.29 },
-      { ticker:'IBIT',  nome:'iShares Bitcoin Trust',      descricao:'ETF de Bitcoin aprovado e gerido pela BlackRock nos EUA. Forma regulada de ter exposição ao BTC sem custodiá-lo diretamente.', val:681.84,   ret:-5.69  },
-      { ticker:'VWO',   nome:'Vanguard Emerging Mkts',     descricao:'Mercados emergentes: China, Índia, Brasil, Taiwan e outros países em desenvolvimento. Alta diversificação global.', val:601.04,   ret:0.17   },
-      { ticker:'VNQ',   nome:'Vanguard Real Estate',       descricao:'REITs americanos — equivalente aos FIIs do Brasil, mas nos EUA. Investe em imóveis comerciais, residenciais e data centers.', val:508.99,   ret:1.80   },
-      { ticker:'ICLN',  nome:'iShares Clean Energy',       descricao:'Empresas de energia limpa: solar, eólica e outras fontes renováveis ao redor do mundo.', val:301.15,   ret:0.40   },
-      { ticker:'QQQM',  nome:'Invesco NASDAQ 100',         descricao:'Similar ao QQQ mas com taxa menor. Ideal para quem compra regularmente e quer acumular no longo prazo.', val:128.95,   ret:1.14   },
+      { ticker:'VOO',  nome:'Vanguard S&P 500',      qtd:15.54018,  pm:654.11,  valSnapshot:10654.50,
+        descricao:'Replica as 500 maiores empresas dos EUA. Considerado um dos melhores investimentos de longo prazo do mundo.' },
+      { ticker:'SCHD', nome:'Schwab US Dividend',     qtd:198.43784, pm:31.34,   valSnapshot:6512.73,
+        descricao:'Focado em empresas americanas com histórico sólido de pagamento de dividendos. Ideal para renda passiva em dólar.' },
+      { ticker:'SCHF', nome:'Schwab Intl Equity',     qtd:200.42367, pm:26.85,   valSnapshot:5460.54,
+        descricao:'Ações de países desenvolvidos fora dos EUA: Europa, Japão, Austrália, etc. Diversificação geográfica.' },
+      { ticker:'QQQ',  nome:'Invesco QQQ',            qtd:7.11070,   pm:660.97,  valSnapshot:5102.21,
+        descricao:'Replica as 100 maiores da NASDAQ — majoritariamente tecnologia (Apple, Microsoft, Google, Meta, Amazon).' },
+      { ticker:'REMX', nome:'VanEck Rare Earth',      qtd:15.39732,  pm:101.12,  valSnapshot:1489.84,
+        descricao:'Empresas de metais raros e estratégicos, essenciais para baterias, veículos elétricos e eletrônicos.' },
+      { ticker:'AIQ',  nome:'Global X AI & Tech',     qtd:20.89714,  pm:53.74,   valSnapshot:1312.55,
+        descricao:'ETF focado em empresas líderes de Inteligência Artificial e tecnologia avançada globalmente.' },
+      { ticker:'XLE',  nome:'Energy Select SPDR',     qtd:21.28300,  pm:58.14,   valSnapshot:1265.49,
+        descricao:'Setor de energia americano: petróleo, gás natural e empresas energéticas.' },
+      { ticker:'SHLD', nome:'Global X Defense Tech',  qtd:11.50269,  pm:73.41,   valSnapshot:749.06,
+        descricao:'Empresas de defesa, aeroespacial e tecnologia militar. Demanda crescente no contexto geopolítico atual.' },
+      { ticker:'IBIT', nome:'iShares Bitcoin Trust',  qtd:15.87141,  pm:45.55,   valSnapshot:681.84,
+        descricao:'ETF de Bitcoin gerido pela BlackRock nos EUA. Forma regulada de ter exposição ao BTC sem custodiá-lo diretamente.' },
+      { ticker:'VWO',  nome:'Vanguard Emerging Mkts', qtd:10.18891,  pm:58.89,   valSnapshot:601.04,
+        descricao:'Mercados emergentes: China, Índia, Brasil, Taiwan e outros países em desenvolvimento.' },
+      { ticker:'VNQ',  nome:'Vanguard Real Estate',   qtd:5.25928,   pm:95.07,   valSnapshot:508.99,
+        descricao:'REITs americanos — equivalente aos FIIs do Brasil, mas nos EUA. Investe em imóveis comerciais e residenciais.' },
+      { ticker:'ICLN', nome:'iShares Clean Energy',   qtd:13.43803,  pm:22.32,   valSnapshot:301.15,
+        descricao:'Empresas de energia limpa: solar, eólica e outras fontes renováveis ao redor do mundo.' },
+      { ticker:'QQQM', nome:'Invesco NASDAQ 100',     qtd:0.43647,   pm:292.11,  valSnapshot:128.95,
+        descricao:'Similar ao QQQ mas com taxa menor. Ideal para quem compra regularmente e quer acumular no longo prazo.' },
     ]
   }
 };
 
-// ── STATE ────────────────────────────────────────────────────────────────────
-let brPrices = {};
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let brPrices  = {};
+let usPrices  = {};
 let cryptoPrices = {};
-let usdBrl = 5.78;
-let charts = {};
+let usdBrl    = 5.78;
+let charts    = {};
 
-// ── UTILS ────────────────────────────────────────────────────────────────────
-const R = (n) => n !== null && n !== undefined
-  ? 'R$ ' + n.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})
-  : '---';
-
-const D = (n) => n !== null && n !== undefined
-  ? '$ ' + n.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})
-  : '---';
-
-const P = (n) => {
-  if (n === null || n === undefined) return '---';
-  return (n >= 0 ? '+' : '') + n.toFixed(2) + '%';
-};
-
-const cls = (n) => n >= 0 ? 'pos' : 'neg';
+// ── UTILS ─────────────────────────────────────────────────────────────────────
+const R  = n => n != null ? 'R$ ' + n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}) : '---';
+const D  = n => n != null ? '$ '  + n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}) : '---';
+const P  = n => n != null ? (n>=0?'+':'')+n.toFixed(2)+'%' : '---';
+const cls = n => n >= 0 ? 'pos' : 'neg';
 const spin = () => '<span class="spin"></span>';
-const tipoClass = (t) => ({ 'Ação':'acao', 'ETF':'etf', 'Cripto':'cripto', 'CDB':'cdb' }[t] || 'acao');
 
-// ── APIs ─────────────────────────────────────────────────────────────────────
+// ── APIs ──────────────────────────────────────────────────────────────────────
 async function fetchBR() {
   try {
     const r = await fetch('https://brapi.dev/api/quote/GOLD11,PETR4');
     const d = await r.json();
-    d.results.forEach(x => { brPrices[x.symbol] = { price: x.regularMarketPrice, chg: x.regularMarketChangePercent }; });
+    d.results.forEach(x => { brPrices[x.symbol] = { price:x.regularMarketPrice, chg:x.regularMarketChangePercent }; });
   } catch(e) { console.warn('BRAPI:', e); }
+}
+
+async function fetchYahoo() {
+  const tickers = [...DATA.avenue.acoes, ...DATA.avenue.etfs].map(a => a.ticker);
+  try {
+    const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${tickers.join(',')}`;
+    const r = await fetch(`https://corsproxy.io/?url=${encodeURIComponent(url)}`);
+    const d = await r.json();
+    (d.quoteResponse?.result || []).forEach(q => {
+      usPrices[q.symbol] = { price: q.regularMarketPrice, chg: q.regularMarketChangePercent };
+    });
+  } catch(e) {
+    console.warn('Yahoo Finance (corsproxy):', e);
+    // fallback: use snapshot price ÷ qty as reference
+  }
 }
 
 async function fetchCrypto() {
   try {
     const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=brl&include_24hr_change=true');
     const d = await r.json();
-    cryptoPrices.bitcoin  = { price: d.bitcoin.brl,  chg: d.bitcoin.brl_24h_change  };
-    cryptoPrices.ethereum = { price: d.ethereum.brl, chg: d.ethereum.brl_24h_change };
+    cryptoPrices.bitcoin  = { price:d.bitcoin.brl,  chg:d.bitcoin.brl_24h_change  };
+    cryptoPrices.ethereum = { price:d.ethereum.brl, chg:d.ethereum.brl_24h_change };
   } catch(e) {
     console.warn('CoinGecko:', e);
-    cryptoPrices.bitcoin  = { price: 389823.77, chg: 0.23 };
-    cryptoPrices.ethereum = { price: 10652.93,  chg: 0.32 };
+    cryptoPrices.bitcoin  = { price:389823.77, chg:0 };
+    cryptoPrices.ethereum = { price:10652.93,  chg:0 };
   }
 }
 
@@ -339,109 +348,128 @@ async function fetchUSD() {
   } catch(e) { console.warn('AwesomeAPI:', e); }
 }
 
-// ── RENDERERS ────────────────────────────────────────────────────────────────
+// ── RENDERERS ─────────────────────────────────────────────────────────────────
 function renderBR() {
-  let total = 0;
+  let totalVal = 0, totalInv = 0;
   const html = DATA.brasil.map(a => {
-    const p = brPrices[a.ticker];
+    const p    = brPrices[a.ticker];
     const cur  = p?.price ?? null;
-    const chg  = p?.chg  ?? null;
+    const chg  = p?.chg   ?? null;
     const inv  = a.qtd * a.pm;
     const atual = cur ? a.qtd * cur : null;
-    const ret  = atual ? ((atual - inv) / inv) * 100 : null;
-    const retR = atual ? atual - inv : null;
-    if (atual) total += atual;
-    const isPos = ret !== null ? ret >= 0 : true;
-
-    return `<div class="acard ${ret !== null ? (isPos?'pos':'neg') : 'neu'}">
+    const ret  = atual ? ((atual-inv)/inv)*100 : null;
+    const retR = atual ? atual-inv : null;
+    if (atual) { totalVal += atual; totalInv += inv; }
+    const isPos = ret != null ? ret>=0 : true;
+    return `<div class="acard ${ret!=null?(isPos?'pos':'neg'):'neu'}">
       <div class="acard-head">
         <div><div class="ticker">${a.ticker}</div><div class="aname">${a.nome}</div></div>
         <span class="broker-tag">${a.corretora}</span>
       </div>
-      <span class="tipo tipo-${tipoClass(a.tipo)}">${a.tipo}</span>
+      <span class="tipo tipo-${a.tipo==='ETF'?'etf':'acao'}">${a.tipo}</span>
       <div class="rows">
-        <div class="row"><span class="rlabel">Preço atual</span><span class="rval">${cur ? R(cur) : spin()}</span></div>
-        <div class="row"><span class="rlabel">Variação hoje</span><span class="rval ${chg !== null ? cls(chg) : ''}">${chg !== null ? P(chg) : spin()}</span></div>
+        <div class="row"><span class="rlabel">Preço atual</span><span class="rval">${cur?R(cur):spin()}</span></div>
+        <div class="row"><span class="rlabel">Variação hoje</span><span class="rval ${chg!=null?cls(chg):''}">${chg!=null?P(chg):spin()}</span></div>
         <div class="row"><span class="rlabel">Quantidade</span><span class="rval">${a.qtd} cotas</span></div>
         <div class="row"><span class="rlabel">Preço médio pago</span><span class="rval">${R(a.pm)}</span></div>
         <div class="row"><span class="rlabel">Total investido</span><span class="rval">${R(inv)}</span></div>
-        <div class="row"><span class="rlabel">Valor atual</span><span class="rval">${atual ? R(atual) : spin()}</span></div>
+        <div class="row"><span class="rlabel">Valor atual</span><span class="rval">${atual?R(atual):spin()}</span></div>
       </div>
       <div class="rendimento">
-        <div><div class="rendimento-label">Rendimento total</div><div class="rendimento-sub">${retR !== null ? R(retR) : '---'}</div></div>
-        <div class="rendimento-val ${ret !== null ? cls(ret) : ''}">${ret !== null ? P(ret) : spin()}</div>
+        <div><div class="rendimento-label">Rendimento total</div><div class="rendimento-sub">${retR!=null?R(retR):'---'}</div></div>
+        <div class="rendimento-val ${ret!=null?cls(ret):''}">${ret!=null?P(ret):spin()}</div>
       </div>
       <div class="tip">💡 ${a.descricao}</div>
     </div>`;
   }).join('');
   document.getElementById('grid-br').innerHTML = html;
-  document.getElementById('tot-br').textContent = total > 0 ? R(total) : '---';
-  return total;
+  document.getElementById('tot-br').textContent = totalVal>0 ? R(totalVal) : '---';
+  // KPI
+  if (totalVal > 0) {
+    const ganho = totalVal - totalInv;
+    const pct = (ganho/totalInv)*100;
+    const el = document.getElementById('kpi-ganho-br');
+    el.textContent = R(ganho);
+    el.className = 'kpi-value ' + cls(ganho);
+    document.getElementById('kpi-ganho-br-sub').textContent = P(pct) + ' desde a compra';
+  }
+  return totalVal;
 }
 
-function renderAvenueAcoes() {
-  let total = 0;
-  const html = DATA.avenue.acoes.map(a => {
-    const inv  = a.val / (1 + a.ret / 100);
-    const brl  = a.val * usdBrl;
-    total += a.val;
-    return `<div class="acard ${a.ret >= 0 ? 'pos' : 'neg'}">
-      <div class="acard-head">
-        <div><div class="ticker">${a.ticker}</div><div class="aname">${a.nome}</div></div>
-        <span class="broker-tag">Avenue</span>
-      </div>
-      <span class="tipo tipo-acao">Ação</span>
-      ${a.setor ? `<span style="font-size:10px;color:var(--muted);margin-left:4px;">${a.setor}</span>` : ''}
-      <div class="rows" style="margin-top:10px">
-        <div class="row"><span class="rlabel">Valor atual (USD)</span><span class="rval">${D(a.val)}</span></div>
-        <div class="row"><span class="rlabel">Em reais (câmbio atual)</span><span class="rval">${R(brl)}</span></div>
-        <div class="row"><span class="rlabel">Valor investido (est.)</span><span class="rval">${D(inv)}</span></div>
-        <div class="row"><span class="rlabel">Ganho/Perda (est.)</span><span class="rval ${cls(a.val - inv)}">${D(a.val - inv)}</span></div>
-      </div>
-      <div class="rendimento">
-        <div><div class="rendimento-label">Retorno total</div><div class="rendimento-sub">desde a compra</div></div>
-        <div class="rendimento-val ${cls(a.ret)}">${P(a.ret)}</div>
-      </div>
-      <div class="tip">💡 ${a.descricao}</div>
-    </div>`;
-  }).join('');
-  document.getElementById('grid-av-ac').innerHTML = html;
-  document.getElementById('tot-av-ac').textContent = D(total);
-  return total;
+function renderAvenueAsset(a, tipo) {
+  const p     = usPrices[a.ticker];
+  const cur   = p?.price ?? null;
+  const chg   = p?.chg   ?? null;
+  const inv   = a.qtd * a.pm;
+  const atual = cur ? a.qtd * cur : a.valSnapshot;
+  const ret   = ((atual - inv) / inv) * 100;
+  const retR  = atual - inv;
+  const brl   = atual * usdBrl;
+  const isLive = cur !== null;
+  const isPos = ret >= 0;
+
+  return `<div class="acard ${isPos?'pos':'neg'}">
+    <div class="acard-head">
+      <div><div class="ticker">${a.ticker} ${isLive?'<span class="live-badge">LIVE</span>':''}</div><div class="aname">${a.nome}</div></div>
+      <span class="broker-tag">Avenue</span>
+    </div>
+    <span class="tipo tipo-${tipo==='etf'?'etf':'acao'}">${tipo==='etf'?'ETF':'Ação'}</span>
+    ${a.setor?`<span style="font-size:10px;color:var(--muted);margin-left:4px;">${a.setor}</span>`:''}
+    <div class="rows" style="margin-top:10px">
+      <div class="row"><span class="rlabel">Preço atual (USD)</span><span class="rval">${cur?D(cur):D(a.valSnapshot/a.qtd)}</span></div>
+      <div class="row"><span class="rlabel">Variação hoje</span><span class="rval ${chg!=null?cls(chg):''}">${chg!=null?P(chg):'mercado fechado'}</span></div>
+      <div class="row"><span class="rlabel">Quantidade</span><span class="rval">${a.qtd.toFixed(5)} ${tipo==='etf'?'cotas':'ações'}</span></div>
+      <div class="row"><span class="rlabel">Preço médio pago</span><span class="rval">${D(a.pm)}</span></div>
+      <div class="row"><span class="rlabel">Total investido</span><span class="rval">${D(inv)}</span></div>
+      <div class="row"><span class="rlabel">Valor atual (USD)</span><span class="rval">${D(atual)}</span></div>
+      <div class="row"><span class="rlabel">Valor atual (BRL)</span><span class="rval">${R(brl)}</span></div>
+    </div>
+    <div class="rendimento">
+      <div><div class="rendimento-label">Rendimento total</div><div class="rendimento-sub">${D(retR)}</div></div>
+      <div class="rendimento-val ${cls(ret)}">${P(ret)}</div>
+    </div>
+    <div class="tip">💡 ${a.descricao}</div>
+  </div>`;
 }
 
-function renderAvenueETFs() {
-  let total = 0;
-  const html = DATA.avenue.etfs.map(a => {
-    const inv = a.val / (1 + a.ret / 100);
-    const brl = a.val * usdBrl;
-    total += a.val;
-    return `<div class="acard ${a.ret >= 0 ? 'pos' : 'neg'}">
-      <div class="acard-head">
-        <div><div class="ticker">${a.ticker}</div><div class="aname">${a.nome}</div></div>
-        <span class="broker-tag">Avenue</span>
-      </div>
-      <span class="tipo tipo-etf">ETF</span>
-      <div class="rows" style="margin-top:10px">
-        <div class="row"><span class="rlabel">Valor atual (USD)</span><span class="rval">${D(a.val)}</span></div>
-        <div class="row"><span class="rlabel">Em reais (câmbio atual)</span><span class="rval">${R(brl)}</span></div>
-        <div class="row"><span class="rlabel">Valor investido (est.)</span><span class="rval">${D(inv)}</span></div>
-        <div class="row"><span class="rlabel">Ganho/Perda (est.)</span><span class="rval ${cls(a.val - inv)}">${D(a.val - inv)}</span></div>
-      </div>
-      <div class="rendimento">
-        <div><div class="rendimento-label">Retorno total</div><div class="rendimento-sub">desde a compra</div></div>
-        <div class="rendimento-val ${cls(a.ret)}">${P(a.ret)}</div>
-      </div>
-      <div class="tip">💡 ${a.descricao}</div>
-    </div>`;
+function renderAvenue() {
+  let totalAcUSD=0, totalAcInv=0, totalEtfUSD=0, totalEtfInv=0;
+
+  document.getElementById('grid-av-ac').innerHTML = DATA.avenue.acoes.map(a => {
+    const p = usPrices[a.ticker];
+    const cur = p?.price ?? null;
+    const val = cur ? a.qtd*cur : a.valSnapshot;
+    totalAcUSD += val; totalAcInv += a.qtd*a.pm;
+    return renderAvenueAsset(a, 'acao');
   }).join('');
-  document.getElementById('grid-av-etf').innerHTML = html;
-  document.getElementById('tot-av-etf').textContent = D(total);
-  return total;
+
+  document.getElementById('grid-av-etf').innerHTML = DATA.avenue.etfs.map(a => {
+    const p = usPrices[a.ticker];
+    const cur = p?.price ?? null;
+    const val = cur ? a.qtd*cur : a.valSnapshot;
+    totalEtfUSD += val; totalEtfInv += a.qtd*a.pm;
+    return renderAvenueAsset(a, 'etf');
+  }).join('');
+
+  const totalAv = totalAcUSD + totalEtfUSD;
+  const totalAvInv = totalAcInv + totalEtfInv;
+
+  document.getElementById('tot-av-ac').textContent  = D(totalAcUSD);
+  document.getElementById('tot-av-etf').textContent = D(totalEtfUSD);
+
+  // KPI ganho avenue
+  const ganhoAv = totalAv - totalAvInv;
+  const pctAv   = (ganhoAv / totalAvInv)*100;
+  const el = document.getElementById('kpi-ganho-av');
+  el.textContent = D(ganhoAv);
+  el.className   = 'kpi-value ' + cls(ganhoAv);
+  document.getElementById('kpi-ganho-av-sub').textContent = P(pctAv) + ' desde a compra';
+
+  return totalAv;
 }
 
 function renderRendaFixa() {
-  const html = DATA.rendaFixa.map(rf => `
+  document.getElementById('grid-rf').innerHTML = DATA.rendaFixa.map(rf => `
     <div class="acard pos">
       <div class="acard-head">
         <div><div class="ticker">CDB</div><div class="aname">${rf.nome}</div></div>
@@ -457,71 +485,66 @@ function renderRendaFixa() {
       <div class="tip" style="margin-top:12px;">💡 ${rf.descricao}</div>
     </div>
   `).join('');
-  document.getElementById('grid-rf').innerHTML = html;
 }
 
 function renderCrypto() {
   let total = 0;
-  const html = DATA.crypto.map(c => {
+  document.getElementById('grid-crypto').innerHTML = DATA.crypto.map(c => {
     const p    = cryptoPrices[c.id];
     const cur  = p?.price ?? null;
     const chg  = p?.chg   ?? null;
-    const atual = cur ? c.qtd * cur : null;
-    const ret  = atual ? ((atual - c.snapshotBRL) / c.snapshotBRL) * 100 : null;
-    const retR = atual ? atual - c.snapshotBRL : null;
-    if (atual) total += atual;
-    const isPos = ret !== null ? ret >= 0 : true;
-
-    return `<div class="acard ${ret !== null ? (isPos?'pos':'neg') : 'neu'}">
+    const atual = cur ? c.qtd*cur : c.snapshotBRL;
+    const ret  = ((atual - c.snapshotBRL) / c.snapshotBRL)*100;
+    total += atual;
+    return `<div class="acard ${ret>=0?'pos':'neg'}">
       <div class="acard-head">
-        <div><div class="ticker">${c.ticker}</div><div class="aname">${c.nome}</div></div>
+        <div><div class="ticker">${c.ticker} <span class="live-badge">LIVE</span></div><div class="aname">${c.nome}</div></div>
         <span class="broker-tag">${c.corretora}</span>
       </div>
       <span class="tipo tipo-cripto">Cripto</span>
       <div class="rows" style="margin-top:10px">
-        <div class="row"><span class="rlabel">Preço atual (BRL)</span><span class="rval">${cur ? R(cur) : spin()}</span></div>
-        <div class="row"><span class="rlabel">Variação 24h</span><span class="rval ${chg !== null ? cls(chg) : ''}">${chg !== null ? P(chg) : spin()}</span></div>
+        <div class="row"><span class="rlabel">Preço atual (BRL)</span><span class="rval">${cur?R(cur):spin()}</span></div>
+        <div class="row"><span class="rlabel">Variação 24h</span><span class="rval ${chg!=null?cls(chg):''}">${chg!=null?P(chg):spin()}</span></div>
         <div class="row"><span class="rlabel">Quantidade</span><span class="rval">${c.qtd.toFixed(8)} ${c.ticker}</span></div>
-        <div class="row"><span class="rlabel">Valor atual</span><span class="rval">${atual ? R(atual) : spin()}</span></div>
+        <div class="row"><span class="rlabel">Valor atual</span><span class="rval">${R(atual)}</span></div>
         <div class="row"><span class="rlabel">Snapshot 25/05</span><span class="rval">${R(c.snapshotBRL)}</span></div>
       </div>
       <div class="rendimento">
-        <div><div class="rendimento-label">Variação desde 25/05</div><div class="rendimento-sub">${retR !== null ? R(retR) : '---'}</div></div>
-        <div class="rendimento-val ${ret !== null ? cls(ret) : ''}">${ret !== null ? P(ret) : spin()}</div>
+        <div><div class="rendimento-label">Variação vs snapshot</div><div class="rendimento-sub">${R(atual-c.snapshotBRL)}</div></div>
+        <div class="rendimento-val ${cls(ret)}">${P(ret)}</div>
       </div>
       <div class="tip">💡 ${c.descricao}</div>
     </div>`;
   }).join('');
-  document.getElementById('grid-crypto').innerHTML = html;
-  document.getElementById('tot-crypto').textContent = total > 0 ? R(total) : '---';
+  document.getElementById('tot-crypto').textContent = R(total);
   return total;
 }
 
 function renderKPIs(brTotal, avUSD, cryptoTotal) {
-  const avBRL   = avUSD * usdBrl;
-  const rfTotal = DATA.rendaFixa.reduce((s, x) => s + x.valorAtual, 0);
+  const avBRL  = avUSD * usdBrl;
+  const rfTotal = DATA.rendaFixa.reduce((s,x)=>s+x.valorAtual,0);
   const rv      = brTotal + avBRL + cryptoTotal;
   const total   = rv + rfTotal;
 
   document.getElementById('kpi-total').textContent = R(total);
   document.getElementById('kpi-rv').textContent    = R(rv);
-  document.getElementById('kpi-usd').textContent   = 'R$ ' + usdBrl.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+  document.getElementById('kpi-usd').textContent   = 'R$ ' + usdBrl.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
   document.getElementById('ts').textContent        = new Date().toLocaleTimeString('pt-BR');
 
   renderCharts(brTotal, avBRL, rfTotal, cryptoTotal);
 }
 
 function renderCharts(br, av, rf, crypto) {
-  const COLORS = ['#58a6ff','#3fb950','#d29922','#bc8cff'];
-  const opts = (labels, data, colors) => ({
-    type: 'doughnut',
-    data: { labels, datasets: [{ data, backgroundColor: colors, borderColor: '#1c2128', borderWidth: 3, hoverOffset: 6 }] },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      cutout: '62%',
-      plugins: {
-        legend: { position:'bottom', labels: { color:'#8b949e', font:{size:11}, padding:12, boxWidth:12 } },
-        tooltip: { callbacks: { label: ctx => {
+  if (charts.tipo) charts.tipo.destroy();
+  if (charts.corr) charts.corr.destroy();
+
+  const mkChart = (id, labels, data, colors) => new Chart(document.getElementById(id), {
+    type:'doughnut',
+    data:{ labels, datasets:[{ data, backgroundColor:colors, borderColor:'#1c2128', borderWidth:3, hoverOffset:6 }] },
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'62%',
+      plugins:{
+        legend:{ position:'bottom', labels:{ color:'#8b949e', font:{size:11}, padding:12, boxWidth:12 }},
+        tooltip:{ callbacks:{ label:ctx => {
           const t = ctx.dataset.data.reduce((a,b)=>a+b,0);
           return ` ${R(ctx.raw)}  (${((ctx.raw/t)*100).toFixed(1)}%)`;
         }}}
@@ -529,45 +552,38 @@ function renderCharts(br, av, rf, crypto) {
     }
   });
 
-  if (charts.tipo) charts.tipo.destroy();
-  if (charts.corr) charts.corr.destroy();
-
-  charts.tipo = new Chart(document.getElementById('chartTipo'), opts(
+  charts.tipo = mkChart('chartTipo',
     ['Ações Brasil','Avenue (EUA)','Renda Fixa','Cripto'],
     [br, av, rf, crypto],
-    COLORS
-  ));
+    ['#58a6ff','#3fb950','#bc8cff','#d29922']
+  );
 
-  // broker breakdown
   const santBR = DATA.brasil.filter(a=>a.corretora==='Santander').reduce((s,a)=>{ const p=brPrices[a.ticker]; return s+(p?a.qtd*p.price:a.qtd*a.pm); },0);
   const ionBR  = DATA.brasil.filter(a=>a.corretora==='Ion').reduce((s,a)=>{ const p=brPrices[a.ticker]; return s+(p?a.qtd*p.price:a.qtd*a.pm); },0);
-  const santRF = DATA.rendaFixa.find(x=>x.corretora==='Santander')?.valorAtual || 0;
-  const ionRF  = DATA.rendaFixa.find(x=>x.corretora==='Ion')?.valorAtual || 0;
+  const santRF = DATA.rendaFixa.find(x=>x.corretora==='Santander')?.valorAtual||0;
+  const ionRF  = DATA.rendaFixa.find(x=>x.corretora==='Ion')?.valorAtual||0;
   const santCr = DATA.crypto.reduce((s,c)=>{ const p=cryptoPrices[c.id]; return s+(p?c.qtd*p.price:c.snapshotBRL); },0);
 
-  charts.corr = new Chart(document.getElementById('chartCorr'), opts(
+  charts.corr = mkChart('chartCorr',
     ['Santander','Ion','Avenue (EUA)'],
-    [santBR + santRF + santCr, ionBR + ionRF, av],
+    [santBR+santRF+santCr, ionBR+ionRF, av],
     ['#f85149','#d29922','#3fb950']
-  ));
+  );
 }
 
-// ── MAIN ─────────────────────────────────────────────────────────────────────
+// ── MAIN ──────────────────────────────────────────────────────────────────────
 async function init() {
   document.getElementById('ts').innerHTML = spin();
-
-  await Promise.all([fetchBR(), fetchCrypto(), fetchUSD()]);
-
+  await Promise.all([fetchBR(), fetchYahoo(), fetchCrypto(), fetchUSD()]);
   const brTotal     = renderBR();
-  const avAcUSD     = renderAvenueAcoes();
-  const avEtfUSD    = renderAvenueETFs();
+  const avUSD       = renderAvenue();
   const cryptoTotal = renderCrypto();
   renderRendaFixa();
-  renderKPIs(brTotal, avAcUSD + avEtfUSD, cryptoTotal);
+  renderKPIs(brTotal, avUSD, cryptoTotal);
 }
 
 init();
-setInterval(init, 60000); // refresh every minute
+setInterval(init, 60000);
 </script>
 </body>
 </html>
