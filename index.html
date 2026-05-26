@@ -313,17 +313,23 @@ async function fetchBR() {
 }
 
 async function fetchYahoo() {
-  const tickers = [...DATA.avenue.acoes, ...DATA.avenue.etfs].map(a => a.ticker);
+  const usTickers = [...DATA.avenue.acoes, ...DATA.avenue.etfs].map(a => a.ticker);
+  const brTickers = [...new Set(DATA.brasil.map(a => a.ticker + '.SA'))];
+  const allTickers = [...usTickers, ...brTickers];
   try {
-    const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${tickers.join(',')}`;
+    const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${allTickers.join(',')}`;
     const r = await fetch(`https://corsproxy.io/?url=${encodeURIComponent(url)}`);
     const d = await r.json();
     (d.quoteResponse?.result || []).forEach(q => {
-      usPrices[q.symbol] = { price: q.regularMarketPrice, chg: q.regularMarketChangePercent };
+      if (q.symbol.endsWith('.SA')) {
+        const base = q.symbol.replace('.SA', '');
+        brPrices[base] = { price: q.regularMarketPrice, chg: q.regularMarketChangePercent };
+      } else {
+        usPrices[q.symbol] = { price: q.regularMarketPrice, chg: q.regularMarketChangePercent };
+      }
     });
   } catch(e) {
     console.warn('Yahoo Finance (corsproxy):', e);
-    // fallback: use snapshot price ÷ qty as reference
   }
 }
 
