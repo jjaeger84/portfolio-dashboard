@@ -78,6 +78,7 @@
 
     .tip { margin-top: 10px; font-size: 11px; color: var(--muted); line-height: 1.45; }
     .live-badge { font-size: 9px; background: rgba(63,185,80,.15); color: var(--green); border-radius: 4px; padding: 1px 5px; vertical-align: middle; margin-left: 4px; }
+    .bcb-badge  { font-size: 9px; background: rgba(188,140,255,.15); color: var(--purple); border-radius: 4px; padding: 1px 5px; vertical-align: middle; margin-left: 4px; }
 
     .pos { color: var(--green); }
     .neg { color: var(--red); }
@@ -95,6 +96,15 @@
     .ctab.on { background: var(--blue); border-color: var(--blue); color: #fff; }
     .ctab:hover:not(.on) { border-color: var(--blue); color: var(--blue); }
     .cmini { height: 72px; position: relative; }
+
+    /* CDB projections bar */
+    .cdb-proj { margin-top: 12px; padding-top: 11px; border-top: 1px solid var(--border); }
+    .cdb-proj-title { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
+    .cdb-proj-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 5px; }
+    .cdb-proj-label { color: var(--muted); }
+    .cdb-proj-val { font-weight: 600; color: var(--purple); }
+    .cdb-taxa-bar { margin-top: 10px; background: var(--bg); border-radius: 4px; height: 5px; overflow: hidden; }
+    .cdb-taxa-fill { height: 100%; background: linear-gradient(90deg, var(--purple), var(--blue)); border-radius: 4px; transition: width .5s; }
 
     footer { margin-top: 48px; padding: 24px; border-top: 1px solid var(--border); text-align: center; color: var(--muted); font-size: 12px; line-height: 1.7; }
 
@@ -130,7 +140,7 @@
     <div class="kpi">
       <div class="kpi-label">🏦 Renda Fixa</div>
       <div class="kpi-value" id="kpi-rf"><span class="spin"></span></div>
-      <div class="kpi-sub" id="kpi-rf-sub">CDB-DI · CDI 14,40% a.a.</div>
+      <div class="kpi-sub" id="kpi-rf-sub">CDB-DI · buscando taxa CDI...</div>
     </div>
     <div class="kpi">
       <div class="kpi-label">💵 Dólar (USD/BRL)</div>
@@ -178,7 +188,7 @@
   <div class="section-head">
     <span style="font-size:18px">🇺🇸</span>
     <h2>Ações — Estados Unidos (Avenue)</h2>
-    <span class="badge">5 ativos · tempo real</span>
+    <span class="badge">8 ativos · tempo real</span>
     <span class="section-total" id="tot-av-ac">---</span>
   </div>
   <div class="info-box">
@@ -190,7 +200,7 @@
   <div class="section-head">
     <span style="font-size:18px">📦</span>
     <h2>ETFs — Estados Unidos (Avenue)</h2>
-    <span class="badge">13 ativos · tempo real</span>
+    <span class="badge">14 ativos · tempo real</span>
     <span class="section-total" id="tot-av-etf">---</span>
   </div>
   <div class="info-box">
@@ -203,10 +213,10 @@
     <span style="font-size:18px">🏛️</span>
     <h2>Renda Fixa</h2>
     <span class="badge">Santander · Ion</span>
-    <span class="section-total">R$ 277.359,09</span>
+    <span class="section-total" id="tot-rf">---</span>
   </div>
   <div class="info-box">
-    <strong>O que é isso?</strong> Renda fixa é como um empréstimo que você faz ao banco — em troca, ele paga juros. O <strong>CDB-DI</strong> rende conforme o CDI (próximo à Selic, hoje ~10,5% ao ano). É mais seguro que ações pois a rentabilidade é previsível. Protegido pelo <strong>FGC</strong> até R$ 250 mil por instituição.
+    <strong>O que é isso?</strong> Renda fixa é como um empréstimo que você faz ao banco — em troca, ele paga juros. O <strong>CDB-DI</strong> rende conforme o CDI (taxa próxima à Selic). É mais seguro que ações pois a rentabilidade é previsível. Protegido pelo <strong>FGC</strong> até R$ 250 mil por instituição.
   </div>
   <div class="grid" id="grid-rf"></div>
 
@@ -225,7 +235,7 @@
 </div>
 
 <footer>
-  <p>📡 Preços em tempo real: BRAPI (B3) · Yahoo Finance (EUA) · CoinGecko (cripto) · AwesomeAPI (câmbio)</p>
+  <p>📡 Preços em tempo real: BRAPI (B3) · yfinance/GitHub Actions (EUA) · CoinGecko (cripto) · AwesomeAPI (câmbio) · BCB (CDI/Selic)</p>
   <p>Atualização automática a cada 60 segundos · Valores em BRL convertidos pela cotação atual do USD</p>
   <p style="margin-top:8px;font-size:11px;">Dashboard para acompanhamento pessoal — não constitui recomendação de investimento.</p>
 </footer>
@@ -242,10 +252,10 @@ const DATA = {
       descricao:'Mesma ação da Petrobras, comprada a um preço médio menor na Ion. Reduz o custo médio total da posição.' },
   ],
   rendaFixa: [
-    { nome:'CDB-DI', corretora:'Santander', valorAtual:124765.20,
+    { nome:'CDB-DI', corretora:'Santander', valorAtual:124765.20, valorBase:124765.20, dataBase:'2026-05-25',
       descricao:'Rende conforme o CDI diariamente. Seguro, previsível e com liquidez diária. Protegido pelo FGC até R$ 250 mil.' },
-    { nome:'CDB DI Santander', corretora:'Ion', valorAtual:152593.89,
-      descricao:'CDB atrelado ao CDI, custodiado na Ion. Rentabilidade de +2,41% no período de março a maio/2026.' },
+    { nome:'CDB DI', corretora:'Ion', valorAtual:152593.89, valorBase:152593.89, dataBase:'2026-05-25',
+      descricao:'CDB atrelado ao CDI, custodiado na Ion. Rentabilidade calculada automaticamente via taxa CDI do Banco Central.' },
   ],
   crypto: [
     { id:'bitcoin',  ticker:'BTC', nome:'Bitcoin',  corretora:'Santander', qtd:0.01414331, snapshotBRL:5513.40,
@@ -257,7 +267,7 @@ const DATA = {
     acoes: [
       { ticker:'NVDA', nome:'NVIDIA Corp',      setor:'Tecnologia / IA',    qtd:11.66481,  pm:201.20,  valSnapshot:2511.78,
         descricao:'Líder mundial em chips para IA, data centers e jogos. Principal beneficiária do boom da inteligência artificial.' },
-      { ticker:'IONQ', nome:'IonQ Inc',          setor:'Comp. Quântica',     qtd:10.03232,  pm:47.95,   valSnapshot:638.26,
+      { ticker:'IONQ', nome:'IonQ Inc',          setor:'Comp. Quântica',     qtd:10.83818,  pm:48.95,   valSnapshot:665.70,
         descricao:'Pioneira em computação quântica — tecnologia que pode superar computadores tradicionais em certas tarefas complexas.' },
       { ticker:'CCJ',  nome:'Cameco Corp',       setor:'Urânio',             qtd:4.71142,   pm:106.13,  valSnapshot:493.38,
         descricao:'Uma das maiores produtoras de urânio do mundo. Beneficiada pelo renascimento da energia nuclear.' },
@@ -265,11 +275,17 @@ const DATA = {
         descricao:'Uma das maiores petrolíferas do mundo. Paga dividendos consistentes há décadas.' },
       { ticker:'UEC',  nome:'Uranium Energy',    setor:'Urânio',             qtd:34.99905,  pm:13.28,   valSnapshot:454.64,
         descricao:'Empresa americana de extração de urânio. Aposta na demanda crescente por energia nuclear limpa.' },
+      { ticker:'META', nome:'Meta Platforms',     setor:'IA / Redes Sociais',  qtd:0.49342,   pm:608.00,  valSnapshot:300.00,
+        descricao:'Dona do Facebook, Instagram e WhatsApp. Apostando pesado em IA e Realidade Aumentada (Meta AI, Llama).' },
+      { ticker:'RKLB', nome:'Rocket Lab USA',     setor:'Aeroespacial',         qtd:2.08698,   pm:143.75,  valSnapshot:300.00,
+        descricao:'Empresa americana de foguetes e satélites pequenos. Concorrente emergente da SpaceX no mercado de lançamentos.' },
+      { ticker:'AVGO', nome:'Broadcom Inc',       setor:'Semicondutores / IA',  qtd:0.69725,   pm:430.26,  valSnapshot:300.00,
+        descricao:'Gigante de chips e software para data centers. Um dos maiores fornecedores de ASICs para IA — clientes incluem Google e Meta.' },
     ],
     etfs: [
-      { ticker:'VOO',  nome:'Vanguard S&P 500',      qtd:15.54018,  pm:654.11,  valSnapshot:10654.50,
+      { ticker:'VOO',  nome:'Vanguard S&P 500',      qtd:15.75768,  pm:654.60,  valSnapshot:10804.40,
         descricao:'Replica as 500 maiores empresas dos EUA. Considerado um dos melhores investimentos de longo prazo do mundo.' },
-      { ticker:'SCHD', nome:'Schwab US Dividend',     qtd:198.43784, pm:31.34,   valSnapshot:6512.73,
+      { ticker:'SCHD', nome:'Schwab US Dividend',     qtd:201.51251, pm:31.36,   valSnapshot:6613.64,
         descricao:'Focado em empresas americanas com histórico sólido de pagamento de dividendos. Ideal para renda passiva em dólar.' },
       { ticker:'SCHF', nome:'Schwab Intl Equity',     qtd:200.42367, pm:26.85,   valSnapshot:5460.54,
         descricao:'Ações de países desenvolvidos fora dos EUA: Europa, Japão, Austrália, etc. Diversificação geográfica.' },
@@ -291,22 +307,25 @@ const DATA = {
         descricao:'REITs americanos — equivalente aos FIIs do Brasil, mas nos EUA. Investe em imóveis comerciais e residenciais.' },
       { ticker:'ICLN', nome:'iShares Clean Energy',   qtd:13.43803,  pm:22.32,   valSnapshot:301.15,
         descricao:'Empresas de energia limpa: solar, eólica e outras fontes renováveis ao redor do mundo.' },
-      { ticker:'QQQM', nome:'Invesco NASDAQ 100',     qtd:0.43647,   pm:292.11,  valSnapshot:128.95,
+      { ticker:'QQQM', nome:'Invesco NASDAQ 100',     qtd:1.10550,   pm:296.24,  valSnapshot:327.61,
         descricao:'Similar ao QQQ mas com taxa menor. Ideal para quem compra regularmente e quer acumular no longo prazo.' },
+      { ticker:'BOTZ', nome:'Global X Robotics & AI',  qtd:12.21388,  pm:40.94,   valSnapshot:500.04,
+        descricao:'ETF focado em empresas de robótica e automação industrial. Beneficiado pela adoção de IA em manufatura e logística.' },
     ]
   }
 };
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
-let brPrices  = {};
-let usPrices  = {};
+let brPrices     = {};
+let usPrices     = {};
 let cryptoPrices = {};
-let usdBrl    = 5.78;
-let charts    = {};
-let historyData = {};
+let usdBrl       = 5.78;
+let cdiAnual     = null;   // taxa CDI anual em % — buscada do BCB
+let charts       = {};
+let historyData  = {};
 const cardCharts = {};
-const allHist = {};
-let cryptoHist = {};
+const allHist    = {};
+let cryptoHist   = {};
 let lastCryptoHistFetch = 0;
 
 // ── UTILS ─────────────────────────────────────────────────────────────────────
@@ -316,7 +335,47 @@ const P  = n => n != null ? (n>=0?'+':'')+n.toFixed(2)+'%' : '---';
 const cls = n => n >= 0 ? 'pos' : 'neg';
 const spin = () => '<span class="spin"></span>';
 
+// Calcula quantos dias úteis entre duas datas (aproximação simples sem feriados)
+function diasUteisEntre(dataInicio, dataFim) {
+  let count = 0;
+  const d = new Date(dataInicio);
+  while (d <= dataFim) {
+    const dow = d.getDay();
+    if (dow !== 0 && dow !== 6) count++;
+    d.setDate(d.getDate() + 1);
+  }
+  return count;
+}
+
+// Calcula valor atualizado do CDB dado taxa CDI anual e dias úteis
+function calcCDB(valorBase, cdiPct, diasUteis) {
+  if (!cdiPct || diasUteis <= 0) return valorBase;
+  // Converte taxa anual (252 dias úteis) para diária: (1 + taxa_anual)^(1/252) - 1
+  const taxaDiaria = Math.pow(1 + cdiPct / 100, 1 / 252) - 1;
+  return valorBase * Math.pow(1 + taxaDiaria, diasUteis);
+}
+
 // ── APIs ──────────────────────────────────────────────────────────────────────
+
+// Busca taxa SELIC/CDI atual do Banco Central do Brasil
+async function fetchCDI() {
+  try {
+    // Série 11 = CDI diário (% a.d.) — pegamos os últimos 10 dias e usamos o mais recente
+    const r = await fetch('https://api.bcb.gov.br/dados/serie/bcdata.sgs.11/dados/ultimos/10?formato=json');
+    const d = await r.json();
+    if (!Array.isArray(d) || !d.length) throw new Error('vazio');
+    // Taxa CDI diária do último dia útil disponível
+    const taxaDiaria = parseFloat(String(d[d.length - 1].valor).replace(',', '.'));
+    // Converte para anual: (1 + taxaDiaria/100)^252 - 1
+    cdiAnual = (Math.pow(1 + taxaDiaria / 100, 252) - 1) * 100;
+    console.log(`CDI diário: ${taxaDiaria}% | CDI anual: ${cdiAnual.toFixed(2)}%`);
+  } catch(e) {
+    console.warn('BCB CDI erro:', e);
+    // Fallback: Selic meta atual (verifique e atualize se necessário)
+    cdiAnual = 10.50;
+  }
+}
+
 async function fetchPrices() {
   try {
     const r = await fetch('prices.json?t=' + Date.now());
@@ -324,6 +383,7 @@ async function fetchPrices() {
     Object.entries(d.br || {}).forEach(([k, v]) => { brPrices[k] = v; });
     Object.entries(d.us || {}).forEach(([k, v]) => { usPrices[k] = v; });
     if (d.usdBrl) usdBrl = d.usdBrl;
+    // CDB: usa valores do prices.json gerado pelo GitHub Actions (mais preciso)
     if (d.cdb) {
       if (d.cdb.santander) DATA.rendaFixa[0].valorAtual = d.cdb.santander;
       if (d.cdb.ion)       DATA.rendaFixa[1].valorAtual = d.cdb.ion;
@@ -334,7 +394,18 @@ async function fetchPrices() {
       const fmt = dt.toLocaleString('pt-BR', {timeZone:'America/Sao_Paulo', day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'});
       document.getElementById('ts-prices').textContent = fmt + ' (BRL)';
     }
-  } catch(e) { console.warn('prices.json:', e); }
+  } catch(e) {
+    console.warn('prices.json indisponível — calculando CDB localmente:', e);
+    // Se prices.json falhar, calcula CDB localmente com CDI do BCB
+    if (cdiAnual) {
+      DATA.rendaFixa.forEach(rf => {
+        const dataBase = new Date(rf.dataBase);
+        const hoje     = new Date();
+        const dias     = diasUteisEntre(dataBase, hoje);
+        rf.valorAtual  = calcCDB(rf.valorBase, cdiAnual, dias);
+      });
+    }
+  }
 }
 
 async function fetchCrypto() {
@@ -404,7 +475,6 @@ function renderBR() {
   }).join('');
   document.getElementById('grid-br').innerHTML = html;
   document.getElementById('tot-br').textContent = totalVal>0 ? R(totalVal) : '---';
-  // KPI
   if (totalVal > 0) {
     const ganho = totalVal - totalInv;
     const pct = (ganho/totalInv)*100;
@@ -481,13 +551,12 @@ function renderAvenue() {
     return renderAvenueAsset(a, 'etf');
   }).join('');
 
-  const totalAv = totalAcUSD + totalEtfUSD;
+  const totalAv    = totalAcUSD + totalEtfUSD;
   const totalAvInv = totalAcInv + totalEtfInv;
 
   document.getElementById('tot-av-ac').textContent  = D(totalAcUSD);
   document.getElementById('tot-av-etf').textContent = D(totalEtfUSD);
 
-  // KPI ganho avenue
   const ganhoAv = totalAv - totalAvInv;
   const pctAv   = (ganhoAv / totalAvInv)*100;
   const el = document.getElementById('kpi-ganho-av');
@@ -499,22 +568,74 @@ function renderAvenue() {
 }
 
 function renderRendaFixa() {
-  document.getElementById('grid-rf').innerHTML = DATA.rendaFixa.map(rf => `
-    <div class="acard pos">
+  const taxaStr = cdiAnual ? cdiAnual.toFixed(2) + '% a.a.' : '---';
+  let totalRF = 0;
+
+  document.getElementById('grid-rf').innerHTML = DATA.rendaFixa.map(rf => {
+    totalRF += rf.valorAtual;
+
+    // Projeções de rendimento futuro com CDI atual
+    const proj30  = cdiAnual ? calcCDB(rf.valorAtual, cdiAnual, 21)  : null; // ~21 dias úteis/mês
+    const proj90  = cdiAnual ? calcCDB(rf.valorAtual, cdiAnual, 63)  : null;
+    const proj365 = cdiAnual ? calcCDB(rf.valorAtual, cdiAnual, 252) : null;
+    const rend30  = proj30  ? proj30  - rf.valorAtual : null;
+    const rend90  = proj90  ? proj90  - rf.valorAtual : null;
+    const rend365 = proj365 ? proj365 - rf.valorAtual : null;
+
+    // Barra de progresso representando CDI vs 15% (meta visual)
+    const barPct = cdiAnual ? Math.min((cdiAnual / 15) * 100, 100) : 0;
+
+    return `<div class="acard pos">
       <div class="acard-head">
-        <div><div class="ticker">CDB</div><div class="aname">${rf.nome}</div></div>
+        <div>
+          <div class="ticker">CDB <span class="bcb-badge">BCB</span></div>
+          <div class="aname">${rf.nome}</div>
+        </div>
         <span class="broker-tag">${rf.corretora}</span>
       </div>
       <span class="tipo tipo-cdb">Renda Fixa</span>
       <div class="rows" style="margin-top:10px">
-        <div class="row"><span class="rlabel">Saldo atual</span><span class="rval" style="font-size:17px;font-weight:700;">${R(rf.valorAtual)}</span></div>
-        <div class="row"><span class="rlabel">Tipo</span><span class="rval">CDB-DI (rende CDI)</span></div>
+        <div class="row"><span class="rlabel">Saldo atual</span><span class="rval" style="font-size:17px;font-weight:700;color:var(--purple)">${R(rf.valorAtual)}</span></div>
+        <div class="row"><span class="rlabel">Taxa CDI (Banco Central)</span><span class="rval" style="color:var(--purple);font-weight:700">${taxaStr}</span></div>
+        <div class="row"><span class="rlabel">Tipo</span><span class="rval">CDB 100% CDI</span></div>
         <div class="row"><span class="rlabel">Proteção FGC</span><span class="rval pos">✓ Até R$ 250.000</span></div>
         <div class="row"><span class="rlabel">Liquidez</span><span class="rval">Diária</span></div>
       </div>
+
+      <div class="cdb-proj">
+        <div class="cdb-proj-title">📈 Projeção de rendimento (taxa atual ${taxaStr})</div>
+        <div class="cdb-proj-row">
+          <span class="cdb-proj-label">Em 30 dias</span>
+          <span class="cdb-proj-val">${rend30 ? '+' + R(rend30) : '---'}</span>
+        </div>
+        <div class="cdb-proj-row">
+          <span class="cdb-proj-label">Em 90 dias</span>
+          <span class="cdb-proj-val">${rend90 ? '+' + R(rend90) : '---'}</span>
+        </div>
+        <div class="cdb-proj-row">
+          <span class="cdb-proj-label">Em 12 meses</span>
+          <span class="cdb-proj-val">${rend365 ? '+' + R(rend365) : '---'}</span>
+        </div>
+        <div class="cdb-proj-row" style="margin-top:4px;font-size:11px;color:var(--muted)">
+          <span>CDI atual vs meta 15%</span>
+          <span>${cdiAnual ? cdiAnual.toFixed(2) + '%' : '---'}</span>
+        </div>
+        <div class="cdb-taxa-bar"><div class="cdb-taxa-fill" style="width:${barPct}%"></div></div>
+      </div>
+
       <div class="tip" style="margin-top:12px;">💡 ${rf.descricao}</div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
+
+  document.getElementById('tot-rf').textContent = R(totalRF);
+
+  // Atualiza KPI renda fixa
+  document.getElementById('kpi-rf').textContent = R(totalRF);
+  if (cdiAnual) {
+    document.getElementById('kpi-rf-sub').textContent = `CDB-DI · CDI ${cdiAnual.toFixed(2)}% a.a. (BCB)`;
+  }
+
+  return totalRF;
 }
 
 function renderCrypto() {
@@ -630,7 +751,6 @@ async function fetchCryptoHist(coinId) {
 }
 
 async function initAllMiniCharts() {
-  // BR assets
   DATA.brasil.forEach((a, i) => {
     const cid = `cm-br-${i}`;
     const h = historyData[a.ticker];
@@ -640,7 +760,6 @@ async function initAllMiniCharts() {
     }
   });
 
-  // Avenue acoes + etfs
   [...DATA.avenue.acoes, ...DATA.avenue.etfs].forEach(a => {
     const cid = `cm-av-${a.ticker}`;
     const h = historyData[a.ticker];
@@ -650,7 +769,6 @@ async function initAllMiniCharts() {
     }
   });
 
-  // Crypto — live from CoinGecko (throttle: once every 5 min)
   const now = Date.now();
   if (now - lastCryptoHistFetch > 300000) {
     lastCryptoHistFetch = now;
@@ -669,15 +787,14 @@ async function initAllMiniCharts() {
   }
 }
 
-function renderKPIs(brTotal, avUSD, cryptoTotal) {
+function renderKPIs(brTotal, avUSD, cryptoTotal, rfTotal) {
   const avBRL  = avUSD * usdBrl;
-  const rfTotal = DATA.rendaFixa.reduce((s,x)=>s+x.valorAtual,0);
-  const rv      = brTotal + avBRL + cryptoTotal;
-  const total   = rv + rfTotal;
+  const rv     = brTotal + avBRL + cryptoTotal;
+  const total  = rv + rfTotal;
 
   document.getElementById('kpi-total').textContent = R(total);
   document.getElementById('kpi-rv').textContent    = R(rv);
-  document.getElementById('kpi-rf').textContent    = R(rfTotal);
+  // kpi-rf e kpi-rf-sub já atualizados em renderRendaFixa()
   document.getElementById('kpi-usd').textContent   = 'R$ ' + usdBrl.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
   document.getElementById('ts').textContent        = new Date().toLocaleTimeString('pt-BR');
 
@@ -724,12 +841,13 @@ function renderCharts(br, av, rf, crypto) {
 // ── MAIN ──────────────────────────────────────────────────────────────────────
 async function init() {
   document.getElementById('ts').innerHTML = spin();
-  await Promise.all([fetchPrices(), fetchCrypto(), fetchUSD()]);
+  // CDI e dados de mercado em paralelo
+  await Promise.all([fetchCDI(), fetchPrices(), fetchCrypto(), fetchUSD()]);
   const brTotal     = renderBR();
   const avUSD       = renderAvenue();
   const cryptoTotal = renderCrypto();
-  renderRendaFixa();
-  renderKPIs(brTotal, avUSD, cryptoTotal);
+  const rfTotal     = renderRendaFixa();   // usa cdiAnual já preenchido
+  renderKPIs(brTotal, avUSD, cryptoTotal, rfTotal);
   await initAllMiniCharts();
 }
 

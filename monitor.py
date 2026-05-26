@@ -29,12 +29,15 @@ IS_OPEN  = NOW_UTC.weekday() < 5  # Mon-Fri
 # Ações e ETFs EUA (Avenue) — yfinance
 US_ASSETS = {
     'NVDA': {'nome': 'NVIDIA',              'qtd': 11.66481,  'pm': 201.20, 'tipo': 'Ação'},
-    'IONQ': {'nome': 'IonQ',                'qtd': 10.03232,  'pm': 47.95,  'tipo': 'Ação'},
+    'IONQ': {'nome': 'IonQ',                'qtd': 10.83818,  'pm': 48.95,  'tipo': 'Ação'},
     'CCJ':  {'nome': 'Cameco (Urânio)',      'qtd': 4.71142,   'pm': 106.13, 'tipo': 'Ação'},
     'XOM':  {'nome': 'Exxon Mobil',          'qtd': 2.98665,   'pm': 150.67, 'tipo': 'Ação'},
     'UEC':  {'nome': 'Uranium Energy',       'qtd': 34.99905,  'pm': 13.28,  'tipo': 'Ação'},
-    'VOO':  {'nome': 'VOO — S&P 500',        'qtd': 15.54018,  'pm': 654.11, 'tipo': 'ETF'},
-    'SCHD': {'nome': 'SCHD — Dividendos',    'qtd': 198.43784, 'pm': 31.34,  'tipo': 'ETF'},
+    'META': {'nome': 'Meta Platforms',         'qtd': 0.49342,   'pm': 608.00, 'tipo': 'Ação'},
+    'RKLB': {'nome': 'Rocket Lab USA',         'qtd': 2.08698,   'pm': 143.75, 'tipo': 'Ação'},
+    'AVGO': {'nome': 'Broadcom Inc',           'qtd': 0.69725,   'pm': 430.26, 'tipo': 'Ação'},
+    'VOO':  {'nome': 'VOO — S&P 500',        'qtd': 15.75768,  'pm': 654.60, 'tipo': 'ETF'},
+    'SCHD': {'nome': 'SCHD — Dividendos',    'qtd': 201.51251, 'pm': 31.36,  'tipo': 'ETF'},
     'SCHF': {'nome': 'SCHF — Intl Equity',   'qtd': 200.42367, 'pm': 26.85,  'tipo': 'ETF'},
     'QQQ':  {'nome': 'QQQ — NASDAQ 100',     'qtd': 7.11070,   'pm': 660.97, 'tipo': 'ETF'},
     'REMX': {'nome': 'REMX — Metais Raros',  'qtd': 15.39732,  'pm': 101.12, 'tipo': 'ETF'},
@@ -45,7 +48,8 @@ US_ASSETS = {
     'VWO':  {'nome': 'VWO — Emergentes',     'qtd': 10.18891,  'pm': 58.89,  'tipo': 'ETF'},
     'VNQ':  {'nome': 'VNQ — Real Estate',    'qtd': 5.25928,   'pm': 95.07,  'tipo': 'ETF'},
     'ICLN': {'nome': 'ICLN — Energia Limpa', 'qtd': 13.43803,  'pm': 22.32,  'tipo': 'ETF'},
-    'QQQM': {'nome': 'QQQM — NASDAQ 100',    'qtd': 0.43647,   'pm': 292.11, 'tipo': 'ETF'},
+    'QQQM': {'nome': 'QQQM — NASDAQ 100',    'qtd': 1.10550,   'pm': 296.24, 'tipo': 'ETF'},
+    'BOTZ': {'nome': 'BOTZ — Robótica & IA',   'qtd': 12.21388,  'pm': 40.94,  'tipo': 'ETF'},
 }
 
 # Brasil — brapi.dev (PM combinado PETR4: 53@47.13 + 68@32.10 = 121@38.68)
