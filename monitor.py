@@ -434,12 +434,39 @@ def morning_summary(usd_brl):
     except Exception as e:
         print(f'  ❌ Resumo matinal erro: {e}')
 
+# ── CDB / RENDA FIXA ──────────────────────────────────────────────────────────
+# Valores base capturados em 25/05/2026 — acumulam CDI diariamente a partir daí
+CDB_BASE = {
+    'santander': {'valor': 124765.20, 'data_base': '25/05/2026'},
+    'ion':       {'valor': 152593.89, 'data_base': '25/05/2026'},
+}
+
+def get_cdi_acumulado(data_inicio_str):
+    """Retorna fator acumulado do CDI desde data_inicio até hoje (BCB série 11)."""
+    hoje = datetime.utcnow().strftime('%d/%m/%Y')
+    url  = (f'https://api.bcb.gov.br/dados/serie/bcdata.sgs.11/dados'
+            f'?formato=json&dataInicial={data_inicio_str}&dataFinal={hoje}')
+    try:
+        r    = requests.get(url, timeout=15)
+        dias = r.json()
+        if not isinstance(dias, list) or not dias:
+            return 1.0
+        fator = 1.0
+        for d in dias:
+            taxa = float(str(d['valor']).replace(',', '.'))
+            fator *= (1 + taxa / 100)
+        print(f'  CDI: {len(dias)} dias úteis | fator acumulado: {fator:.8f}')
+        return fator
+    except Exception as e:
+        print(f'  ⚠️ CDI BCB erro: {e}')
+        return 1.0
+
 # ── PRICES.JSON (para o dashboard estático) ───────────────────────────────────
 def write_prices(usd_brl):
     """Gera prices.json no repositório — lido pelo dashboard sem proxy CORS."""
     from datetime import timezone
     print('\n💾 Gerando prices.json...')
-    prices = {'br': {}, 'us': {}, 'usdBrl': usd_brl}
+    prices = {'br': {}, 'us': {}, 'usdBrl': usd_brl, 'cdb': {}}
 
     # EUA via yfinance
     tickers = list(US_ASSETS.keys())
@@ -473,10 +500,18 @@ def write_prices(usd_brl):
     except Exception as e:
         print(f'  ❌ yfinance BR: {e}')
 
+    # CDB — acumula CDI diariamente via BCB
+    print('  Calculando CDB com CDI acumulado...')
+    for nome, info in CDB_BASE.items():
+        fator = get_cdi_acumulado(info['data_base'])
+        valor_atual = round(info['valor'] * fator, 2)
+        prices['cdb'][nome] = valor_atual
+        print(f'  CDB {nome}: R$ {valor_atual:,.2f} (fator {fator:.6f})')
+
     prices['updated'] = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
     with open('prices.json', 'w') as f:
         json.dump(prices, f, separators=(',', ':'))
-    print(f'  ✅ {len(prices["us"])} EUA + {len(prices["br"])} BR | {prices["updated"]}')
+    print(f'  ✅ {len(prices["us"])} EUA + {len(prices["br"])} BR + CDB | {prices["updated"]}')
 
 # ── MAIN ──────────────────────────────────────────────────────────────────────
 if __name__ == '__main__':

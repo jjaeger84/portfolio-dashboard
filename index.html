@@ -311,6 +311,10 @@ async function fetchPrices() {
     Object.entries(d.br || {}).forEach(([k, v]) => { brPrices[k] = v; });
     Object.entries(d.us || {}).forEach(([k, v]) => { usPrices[k] = v; });
     if (d.usdBrl) usdBrl = d.usdBrl;
+    if (d.cdb) {
+      if (d.cdb.santander) DATA.rendaFixa[0].valorAtual = d.cdb.santander;
+      if (d.cdb.ion)       DATA.rendaFixa[1].valorAtual = d.cdb.ion;
+    }
   } catch(e) { console.warn('prices.json:', e); }
 }
 
