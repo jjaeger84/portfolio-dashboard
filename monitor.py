@@ -434,6 +434,50 @@ def morning_summary(usd_brl):
     except Exception as e:
         print(f'  ❌ Resumo matinal erro: {e}')
 
+# ── PRICES.JSON (para o dashboard estático) ───────────────────────────────────
+def write_prices(usd_brl):
+    """Gera prices.json no repositório — lido pelo dashboard sem proxy CORS."""
+    from datetime import timezone
+    print('\n💾 Gerando prices.json...')
+    prices = {'br': {}, 'us': {}, 'usdBrl': usd_brl}
+
+    # EUA via yfinance
+    tickers = list(US_ASSETS.keys())
+    try:
+        raw    = yf.download(tickers, period='5d', auto_adjust=True, progress=False)
+        closes = raw['Close']
+        for t in tickers:
+            try:
+                col = closes[t].dropna()
+                if len(col) >= 2:
+                    cur, prev = float(col.iloc[-1]), float(col.iloc[-2])
+                    prices['us'][t] = {'price': round(cur, 4), 'chg': round((cur - prev) / prev * 100, 2)}
+            except Exception as e:
+                print(f'  ⚠️ {t}: {e}')
+    except Exception as e:
+        print(f'  ❌ yfinance EUA: {e}')
+
+    # Brasil via yfinance .SA
+    br_map = {k + '.SA': k for k in BR_ASSETS}
+    try:
+        raw    = yf.download(list(br_map.keys()), period='5d', auto_adjust=True, progress=False)
+        closes = raw['Close']
+        for sa, base in br_map.items():
+            try:
+                col = closes[sa].dropna()
+                if len(col) >= 2:
+                    cur, prev = float(col.iloc[-1]), float(col.iloc[-2])
+                    prices['br'][base] = {'price': round(cur, 2), 'chg': round((cur - prev) / prev * 100, 2)}
+            except Exception as e:
+                print(f'  ⚠️ {base}: {e}')
+    except Exception as e:
+        print(f'  ❌ yfinance BR: {e}')
+
+    prices['updated'] = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+    with open('prices.json', 'w') as f:
+        json.dump(prices, f, separators=(',', ':'))
+    print(f'  ✅ {len(prices["us"])} EUA + {len(prices["br"])} BR | {prices["updated"]}')
+
 # ── MAIN ──────────────────────────────────────────────────────────────────────
 if __name__ == '__main__':
     print(f'\n{"="*50}')
@@ -444,6 +488,7 @@ if __name__ == '__main__':
     usd_brl = get_usd_brl()
     print(f'💵 USD/BRL: R$ {usd_brl:.2f}')
 
+    write_prices(usd_brl)
     morning_summary(usd_brl)
     analyze_us(usd_brl)
     analyze_br()

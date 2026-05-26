@@ -304,33 +304,14 @@ const cls = n => n >= 0 ? 'pos' : 'neg';
 const spin = () => '<span class="spin"></span>';
 
 // ── APIs ──────────────────────────────────────────────────────────────────────
-async function fetchBR() {
+async function fetchPrices() {
   try {
-    const r = await fetch('https://brapi.dev/api/quote/GOLD11,PETR4');
+    const r = await fetch('prices.json?t=' + Date.now());
     const d = await r.json();
-    d.results.forEach(x => { brPrices[x.symbol] = { price:x.regularMarketPrice, chg:x.regularMarketChangePercent }; });
-  } catch(e) { console.warn('BRAPI:', e); }
-}
-
-async function fetchYahoo() {
-  const usTickers = [...DATA.avenue.acoes, ...DATA.avenue.etfs].map(a => a.ticker);
-  const brTickers = [...new Set(DATA.brasil.map(a => a.ticker + '.SA'))];
-  const allTickers = [...usTickers, ...brTickers];
-  try {
-    const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${allTickers.join(',')}`;
-    const r = await fetch(`https://corsproxy.io/?url=${encodeURIComponent(url)}`);
-    const d = await r.json();
-    (d.quoteResponse?.result || []).forEach(q => {
-      if (q.symbol.endsWith('.SA')) {
-        const base = q.symbol.replace('.SA', '');
-        brPrices[base] = { price: q.regularMarketPrice, chg: q.regularMarketChangePercent };
-      } else {
-        usPrices[q.symbol] = { price: q.regularMarketPrice, chg: q.regularMarketChangePercent };
-      }
-    });
-  } catch(e) {
-    console.warn('Yahoo Finance (corsproxy):', e);
-  }
+    Object.entries(d.br || {}).forEach(([k, v]) => { brPrices[k] = v; });
+    Object.entries(d.us || {}).forEach(([k, v]) => { usPrices[k] = v; });
+    if (d.usdBrl) usdBrl = d.usdBrl;
+  } catch(e) { console.warn('prices.json:', e); }
 }
 
 async function fetchCrypto() {
@@ -580,7 +561,7 @@ function renderCharts(br, av, rf, crypto) {
 // ── MAIN ──────────────────────────────────────────────────────────────────────
 async function init() {
   document.getElementById('ts').innerHTML = spin();
-  await Promise.all([fetchBR(), fetchYahoo(), fetchCrypto(), fetchUSD()]);
+  await Promise.all([fetchPrices(), fetchCrypto(), fetchUSD()]);
   const brTotal     = renderBR();
   const avUSD       = renderAvenue();
   const cryptoTotal = renderCrypto();
