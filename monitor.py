@@ -461,6 +461,62 @@ def get_cdi_acumulado(data_inicio_str):
         print(f'  ⚠️ CDI BCB erro: {e}')
         return 1.0
 
+# ── HISTÓRICO PARA GRÁFICOS ───────────────────────────────────────────────────
+def fetch_history():
+    """Busca histórico de preços (3 períodos) para os mini-gráficos do dashboard."""
+    history = {}
+
+    def to_points(series, decimals=4):
+        pts = []
+        for ts, price in series.dropna().items():
+            try:
+                pts.append([int(ts.timestamp() * 1000), round(float(price), decimals)])
+            except Exception:
+                pass
+        return pts
+
+    # EUA — 18 tickers, 3 períodos
+    us_tickers = list(US_ASSETS.keys())
+    print('  Buscando histórico EUA...')
+    try:
+        c1d  = yf.download(us_tickers, period='2d',  interval='1h',  auto_adjust=True, progress=False)['Close']
+        c30d = yf.download(us_tickers, period='1mo', interval='1d',  auto_adjust=True, progress=False)['Close']
+        c1y  = yf.download(us_tickers, period='1y',  interval='1wk', auto_adjust=True, progress=False)['Close']
+        for t in us_tickers:
+            try:
+                history[t] = {
+                    '1d':  to_points(c1d[t].dropna().iloc[-24:]),
+                    '30d': to_points(c30d[t].dropna()),
+                    '1y':  to_points(c1y[t].dropna()),
+                }
+            except Exception as e:
+                print(f'    ⚠️ hist {t}: {e}')
+    except Exception as e:
+        print(f'  ❌ history EUA: {e}')
+
+    # Brasil — GOLD11 e PETR4
+    br_map = {'GOLD11.SA': 'GOLD11', 'PETR4.SA': 'PETR4'}
+    br_sa  = list(br_map.keys())
+    print('  Buscando histórico BR...')
+    try:
+        b1d  = yf.download(br_sa, period='2d',  interval='1h',  auto_adjust=True, progress=False)['Close']
+        b30d = yf.download(br_sa, period='1mo', interval='1d',  auto_adjust=True, progress=False)['Close']
+        b1y  = yf.download(br_sa, period='1y',  interval='1wk', auto_adjust=True, progress=False)['Close']
+        for sa, base in br_map.items():
+            try:
+                history[base] = {
+                    '1d':  to_points(b1d[sa].dropna().iloc[-24:], 2),
+                    '30d': to_points(b30d[sa].dropna(), 2),
+                    '1y':  to_points(b1y[sa].dropna(), 2),
+                }
+            except Exception as e:
+                print(f'    ⚠️ hist {sa}: {e}')
+    except Exception as e:
+        print(f'  ❌ history BR: {e}')
+
+    print(f'  ✅ Histórico: {len(history)} ativos')
+    return history
+
 # ── PRICES.JSON (para o dashboard estático) ───────────────────────────────────
 def write_prices(usd_brl):
     """Gera prices.json no repositório — lido pelo dashboard sem proxy CORS."""
@@ -508,10 +564,13 @@ def write_prices(usd_brl):
         prices['cdb'][nome] = valor_atual
         print(f'  CDB {nome}: R$ {valor_atual:,.2f} (fator {fator:.6f})')
 
+    # Histórico para gráficos
+    prices['history'] = fetch_history()
+
     prices['updated'] = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
     with open('prices.json', 'w') as f:
         json.dump(prices, f, separators=(',', ':'))
-    print(f'  ✅ {len(prices["us"])} EUA + {len(prices["br"])} BR + CDB | {prices["updated"]}')
+    print(f'  ✅ {len(prices["us"])} EUA + {len(prices["br"])} BR + CDB + histórico | {prices["updated"]}')
 
 # ── MAIN ──────────────────────────────────────────────────────────────────────
 if __name__ == '__main__':

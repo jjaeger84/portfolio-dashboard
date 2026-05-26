@@ -88,6 +88,14 @@
     .spin { display: inline-block; width: 13px; height: 13px; border: 2px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; }
     @keyframes spin { to{transform:rotate(360deg)} }
 
+    .chart-section { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); }
+    .ctabs { display: flex; gap: 4px; margin-bottom: 6px; align-items: center; }
+    .cchg  { font-size: 11px; font-weight: 600; margin-right: auto; }
+    .ctab  { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 2px 8px; border-radius: 4px; font-size: 10px; cursor: pointer; transition: all .15s; }
+    .ctab.on { background: var(--blue); border-color: var(--blue); color: #fff; }
+    .ctab:hover:not(.on) { border-color: var(--blue); color: var(--blue); }
+    .cmini { height: 72px; position: relative; }
+
     footer { margin-top: 48px; padding: 24px; border-top: 1px solid var(--border); text-align: center; color: var(--muted); font-size: 12px; line-height: 1.7; }
 
     @media(max-width:600px){ .grid{grid-template-columns:1fr} .header-left h1{font-size:14px} .kpi-value{font-size:20px} }
@@ -295,6 +303,11 @@ let usPrices  = {};
 let cryptoPrices = {};
 let usdBrl    = 5.78;
 let charts    = {};
+let historyData = {};
+const cardCharts = {};
+const allHist = {};
+let cryptoHist = {};
+let lastCryptoHistFetch = 0;
 
 // ── UTILS ─────────────────────────────────────────────────────────────────────
 const R  = n => n != null ? 'R$ ' + n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}) : '---';
@@ -315,6 +328,7 @@ async function fetchPrices() {
       if (d.cdb.santander) DATA.rendaFixa[0].valorAtual = d.cdb.santander;
       if (d.cdb.ion)       DATA.rendaFixa[1].valorAtual = d.cdb.ion;
     }
+    if (d.history) historyData = d.history;
     if (d.updated) {
       const dt = new Date(d.updated);
       const fmt = dt.toLocaleString('pt-BR', {timeZone:'America/Sao_Paulo', day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'});
@@ -347,7 +361,7 @@ async function fetchUSD() {
 // ── RENDERERS ─────────────────────────────────────────────────────────────────
 function renderBR() {
   let totalVal = 0, totalInv = 0;
-  const html = DATA.brasil.map(a => {
+  const html = DATA.brasil.map((a, i) => {
     const p    = brPrices[a.ticker];
     const cur  = p?.price ?? null;
     const chg  = p?.chg   ?? null;
@@ -357,6 +371,7 @@ function renderBR() {
     const retR = atual ? atual-inv : null;
     if (atual) { totalVal += atual; totalInv += inv; }
     const isPos = ret != null ? ret>=0 : true;
+    const cid = `cm-br-${i}`;
     return `<div class="acard ${ret!=null?(isPos?'pos':'neg'):'neu'}">
       <div class="acard-head">
         <div><div class="ticker">${a.ticker}</div><div class="aname">${a.nome}</div></div>
@@ -376,6 +391,15 @@ function renderBR() {
         <div class="rendimento-val ${ret!=null?cls(ret):''}">${ret!=null?P(ret):spin()}</div>
       </div>
       <div class="tip">💡 ${a.descricao}</div>
+      <div class="chart-section">
+        <div class="ctabs">
+          <span class="cchg" id="cchg-${cid}"></span>
+          <button class="ctab" onclick="setPeriod('${cid}','1d',this)">24h</button>
+          <button class="ctab on" onclick="setPeriod('${cid}','30d',this)">30d</button>
+          <button class="ctab" onclick="setPeriod('${cid}','1y',this)">12m</button>
+        </div>
+        <div class="cmini"><canvas id="${cid}"></canvas></div>
+      </div>
     </div>`;
   }).join('');
   document.getElementById('grid-br').innerHTML = html;
@@ -403,6 +427,7 @@ function renderAvenueAsset(a, tipo) {
   const brl   = atual * usdBrl;
   const isLive = cur !== null;
   const isPos = ret >= 0;
+  const cid   = `cm-av-${a.ticker}`;
 
   return `<div class="acard ${isPos?'pos':'neg'}">
     <div class="acard-head">
@@ -425,6 +450,15 @@ function renderAvenueAsset(a, tipo) {
       <div class="rendimento-val ${cls(ret)}">${P(ret)}</div>
     </div>
     <div class="tip">💡 ${a.descricao}</div>
+    <div class="chart-section">
+      <div class="ctabs">
+        <span class="cchg" id="cchg-${cid}"></span>
+        <button class="ctab" onclick="setPeriod('${cid}','1d',this)">24h</button>
+        <button class="ctab on" onclick="setPeriod('${cid}','30d',this)">30d</button>
+        <button class="ctab" onclick="setPeriod('${cid}','1y',this)">12m</button>
+      </div>
+      <div class="cmini"><canvas id="${cid}"></canvas></div>
+    </div>
   </div>`;
 }
 
@@ -492,6 +526,7 @@ function renderCrypto() {
     const atual = cur ? c.qtd*cur : c.snapshotBRL;
     const ret  = ((atual - c.snapshotBRL) / c.snapshotBRL)*100;
     total += atual;
+    const cid = `cm-cr-${c.ticker}`;
     return `<div class="acard ${ret>=0?'pos':'neg'}">
       <div class="acard-head">
         <div><div class="ticker">${c.ticker} <span class="live-badge">LIVE</span></div><div class="aname">${c.nome}</div></div>
@@ -510,10 +545,128 @@ function renderCrypto() {
         <div class="rendimento-val ${cls(ret)}">${P(ret)}</div>
       </div>
       <div class="tip">💡 ${c.descricao}</div>
+      <div class="chart-section">
+        <div class="ctabs">
+          <span class="cchg" id="cchg-${cid}"></span>
+          <button class="ctab" onclick="setPeriod('${cid}','1d',this)">24h</button>
+          <button class="ctab on" onclick="setPeriod('${cid}','30d',this)">30d</button>
+          <button class="ctab" onclick="setPeriod('${cid}','1y',this)">12m</button>
+        </div>
+        <div class="cmini"><canvas id="${cid}"></canvas></div>
+      </div>
     </div>`;
   }).join('');
   document.getElementById('tot-crypto').textContent = R(total);
   return total;
+}
+
+// ── MINI CHARTS ───────────────────────────────────────────────────────────────
+function drawChart(cid, pts, currency) {
+  if (!pts || !pts.length) return;
+  const canvas = document.getElementById(cid);
+  if (!canvas) return;
+  if (cardCharts[cid]) { try { cardCharts[cid].destroy(); } catch(e) {} delete cardCharts[cid]; }
+
+  const prices = pts.map(p => p[1]);
+  const first  = prices[0], last = prices[prices.length - 1];
+  const up     = last >= first;
+  const color  = up ? '#3fb950' : '#f85149';
+  const pct    = ((last - first) / first * 100).toFixed(2);
+
+  const chgEl = document.getElementById('cchg-' + cid);
+  if (chgEl) { chgEl.textContent = (up?'+':'') + pct + '%'; chgEl.className = 'cchg ' + (up?'pos':'neg'); }
+
+  cardCharts[cid] = new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels: pts.map(p => p[0]),
+      datasets: [{
+        data: prices,
+        borderColor: color,
+        borderWidth: 1.5,
+        pointRadius: 0,
+        fill: true,
+        backgroundColor: up ? 'rgba(63,185,80,.07)' : 'rgba(248,81,73,.07)',
+        tension: 0.35
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => currency === 'BRL' ? R(ctx.raw) : D(ctx.raw),
+            title: ctx => new Date(pts[ctx[0].dataIndex][0]).toLocaleDateString('pt-BR')
+          }
+        }
+      },
+      scales: { x: { display: false }, y: { display: false } },
+      interaction: { intersect: false, mode: 'index' }
+    }
+  });
+}
+
+function setPeriod(cid, period, btn) {
+  const h = allHist[cid];
+  if (!h || !h[period] || !h[period].length) return;
+  drawChart(cid, h[period], h._currency);
+  btn.parentElement.querySelectorAll('.ctab').forEach(t => t.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+async function fetchCryptoHist(coinId) {
+  const hist = {};
+  for (const [key, days] of [['1d',1],['30d',30],['1y',365]]) {
+    try {
+      const r = await fetch(`https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?vs_currency=brl&days=${days}`);
+      const d = await r.json();
+      hist[key] = (d.prices || []);
+    } catch(e) { hist[key] = []; }
+  }
+  return hist;
+}
+
+async function initAllMiniCharts() {
+  // BR assets
+  DATA.brasil.forEach((a, i) => {
+    const cid = `cm-br-${i}`;
+    const h = historyData[a.ticker];
+    if (h && h['30d'] && h['30d'].length) {
+      allHist[cid] = { ...h, _currency: 'BRL' };
+      drawChart(cid, h['30d'], 'BRL');
+    }
+  });
+
+  // Avenue acoes + etfs
+  [...DATA.avenue.acoes, ...DATA.avenue.etfs].forEach(a => {
+    const cid = `cm-av-${a.ticker}`;
+    const h = historyData[a.ticker];
+    if (h && h['30d'] && h['30d'].length) {
+      allHist[cid] = { ...h, _currency: 'USD' };
+      drawChart(cid, h['30d'], 'USD');
+    }
+  });
+
+  // Crypto — live from CoinGecko (throttle: once every 5 min)
+  const now = Date.now();
+  if (now - lastCryptoHistFetch > 300000) {
+    lastCryptoHistFetch = now;
+    for (const c of DATA.crypto) {
+      const cid = `cm-cr-${c.ticker}`;
+      const h = await fetchCryptoHist(c.id);
+      allHist[cid] = { ...h, _currency: 'BRL' };
+      if (h['30d'] && h['30d'].length) drawChart(cid, h['30d'], 'BRL');
+    }
+  } else {
+    DATA.crypto.forEach(c => {
+      const cid = `cm-cr-${c.ticker}`;
+      const h = allHist[cid];
+      if (h && h['30d'] && h['30d'].length) drawChart(cid, h['30d'], 'BRL');
+    });
+  }
 }
 
 function renderKPIs(brTotal, avUSD, cryptoTotal) {
@@ -577,6 +730,7 @@ async function init() {
   const cryptoTotal = renderCrypto();
   renderRendaFixa();
   renderKPIs(brTotal, avUSD, cryptoTotal);
+  await initAllMiniCharts();
 }
 
 init();
