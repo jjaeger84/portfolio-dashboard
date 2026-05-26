@@ -101,7 +101,7 @@
     <h1>Meu Portfólio de Investimentos</h1>
   </div>
   <div class="header-right">
-    <span class="update-info"><span class="dot"></span> Atualizado: <span id="ts">--:--</span></span>
+    <span class="update-info"><span class="dot"></span> Preços: <span id="ts">--:--</span> &nbsp;|&nbsp; Ações/CDB: <span id="ts-prices">aguardando</span></span>
     <button class="btn" onclick="init()">⟳ Atualizar</button>
   </div>
 </div>
@@ -121,8 +121,8 @@
     </div>
     <div class="kpi">
       <div class="kpi-label">🏦 Renda Fixa</div>
-      <div class="kpi-value">R$ 277.359</div>
-      <div class="kpi-sub">CDB-DI Santander + Ion</div>
+      <div class="kpi-value" id="kpi-rf"><span class="spin"></span></div>
+      <div class="kpi-sub" id="kpi-rf-sub">CDB-DI · CDI 14,40% a.a.</div>
     </div>
     <div class="kpi">
       <div class="kpi-label">💵 Dólar (USD/BRL)</div>
@@ -314,6 +314,11 @@ async function fetchPrices() {
     if (d.cdb) {
       if (d.cdb.santander) DATA.rendaFixa[0].valorAtual = d.cdb.santander;
       if (d.cdb.ion)       DATA.rendaFixa[1].valorAtual = d.cdb.ion;
+    }
+    if (d.updated) {
+      const dt = new Date(d.updated);
+      const fmt = dt.toLocaleString('pt-BR', {timeZone:'America/Sao_Paulo', day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'});
+      document.getElementById('ts-prices').textContent = fmt + ' (BRL)';
     }
   } catch(e) { console.warn('prices.json:', e); }
 }
@@ -519,6 +524,7 @@ function renderKPIs(brTotal, avUSD, cryptoTotal) {
 
   document.getElementById('kpi-total').textContent = R(total);
   document.getElementById('kpi-rv').textContent    = R(rv);
+  document.getElementById('kpi-rf').textContent    = R(rfTotal);
   document.getElementById('kpi-usd').textContent   = 'R$ ' + usdBrl.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
   document.getElementById('ts').textContent        = new Date().toLocaleTimeString('pt-BR');
 

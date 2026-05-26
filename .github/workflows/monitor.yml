@@ -2,10 +2,10 @@ name: 📊 Monitor de Portfólio
 
 on:
   schedule:
-    # Roda a cada hora, dias úteis, das 12h às 22h UTC
-    # = 9h às 19h (hora de Brasília) / 8h às 18h (ET)
-    # Cobre abertura da B3 (10h BRL) e NYSE (10h ET) até o fechamento
-    - cron: '0 12-22 * * 1-5'
+    # Roda a cada hora, dias úteis, das 9h às 22h UTC
+    # = 6h às 19h (hora de Brasília)
+    # Cobre abertura da B3 (10h BRL) e NYSE (9:30h ET) até o fechamento
+    - cron: '0 9-22 * * 1-5'
   workflow_dispatch:
     inputs:
       debug:
