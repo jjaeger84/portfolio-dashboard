@@ -64,26 +64,6 @@ CRYPTO = {
     'ethereum': {'ticker': 'ETH', 'nome': 'Ethereum', 'qtd': 0.18939318},
 }
 
-# Watchlist — zonas de entrada monitoradas
-WATCHLIST = {
-    'ASTS': {'nome': 'AST SpaceMobile',          'tese': 'Rede celular via satélite',  'zona_min': 70,  'zona_max': 85,   'stop': 60,   'target': 108},
-    'JOBY': {'nome': 'Joby Aviation',             'tese': 'eVTOL táxi aéreo',           'zona_min': 8,   'zona_max': 9.50, 'stop': 7.0,  'target': 13},
-    'V':    {'nome': 'Visa Inc',                  'tese': 'Copa 2026 + fundamentos',    'zona_min': 305, 'zona_max': 318,  'stop': 295,  'target': 399},
-    'DKNG': {'nome': 'DraftKings',                'tese': 'Swing Copa (sair<19/jul)',   'zona_min': 22,  'zona_max': 23.5, 'stop': 19.5, 'target': 35},
-    'ALAB': {'nome': 'Astera Labs',               'tese': 'Conectividade IA',           'zona_min': 200, 'zona_max': 235,  'stop': 175,  'target': 400},
-    'OPFI': {'nome': 'OppFi',                     'tese': 'Fintech P/E 4x',            'zona_min': 7,   'zona_max': 9,    'stop': 5.5,  'target': 18},
-    'RDDT': {'nome': 'Reddit',                    'tese': 'Dados para IA',             'zona_min': 115, 'zona_max': 140,  'stop': 95,   'target': 250},
-    'ENLT': {'nome': 'Enlight Renewable Energy',  'tese': 'Energia para data centers', 'zona_min': 55,  'zona_max': 68,   'stop': 48,   'target': 100},
-    'RXRX': {'nome': 'Recursion Pharmaceuticals', 'tese': 'IA + drogas (alto risco)',  'zona_min': 5,   'zona_max': 8,    'stop': 3.5,  'target': 30},
-    'LUNR': {'nome': 'Intuitive Machines',        'tese': 'Logística lunar',           'zona_min': 12,  'zona_max': 18,   'stop': 9,    'target': 50},
-    'CRWV': {'nome': 'CoreWeave',                 'tese': 'Nuvem 100% IA',             'zona_min': 45,  'zona_max': 60,   'stop': 38,   'target': 120},
-    'NBIS': {'nome': 'Nebius Group',              'tese': 'Data centers IA Europa',    'zona_min': 18,  'zona_max': 25,   'stop': 14,   'target': 80},
-    'SERV': {'nome': 'Serve Robotics',            'tese': 'Entrega autônoma',          'zona_min': 8,   'zona_max': 12,   'stop': 6,    'target': 40},
-    'ACHR': {'nome': 'Archer Aviation',           'tese': 'eVTOL',                     'zona_min': 8,   'zona_max': 11,   'stop': 6.5,  'target': 35},
-}
-
-WATCHLIST_STATE = 'watchlist_fired.json'
-
 # ── HELPERS ───────────────────────────────────────────────────────────────────
 def rsi(series, period=14):
     delta = series.diff()
@@ -95,17 +75,6 @@ def rsi(series, period=14):
 def fmt_brl(v): return f'R$ {v:,.2f}'.replace(',','X').replace('.',',').replace('X','.')
 def fmt_usd(v): return f'$ {v:,.2f}'.replace(',','X').replace('.',',').replace('X','.')
 def fmt_pct(v): return f'{v:+.1f}%'
-
-def load_wl_state():
-    try:
-        with open(WATCHLIST_STATE) as f:
-            return json.load(f)
-    except:
-        return {}
-
-def save_wl_state(state):
-    with open(WATCHLIST_STATE, 'w') as f:
-        json.dump(state, f, indent=2)
 
 def get_usd_brl():
     try:
@@ -329,169 +298,6 @@ def analyze_us(usd_brl):
             print(f'  ❌ {ticker}: {e}')
 
     return alerts
-
-# ── WATCHLIST — ZONAS DE ENTRADA ──────────────────────────────────────────────
-def analyze_watchlist():
-    print('\n👀 Analisando watchlist...')
-    state   = load_wl_state()
-    today   = NOW_UTC.strftime('%Y-%m-%d')
-    tickers = list(WATCHLIST.keys())
-
-    try:
-        data = yf.download(tickers, period='1y', auto_adjust=True, progress=False)
-    except Exception as e:
-        print(f'  ❌ yfinance watchlist: {e}')
-        save_wl_state(state)
-        return
-
-    for ticker, info in WATCHLIST.items():
-        try:
-            hist = data['Close'][ticker].dropna()
-            if len(hist) < 15:
-                print(f'  ⚠️ {ticker}: dados insuficientes')
-                continue
-
-            cur   = float(hist.iloc[-1])
-            prev  = float(hist.iloc[-2])
-            daily = ((cur - prev) / prev) * 100
-            rsi_v = rsi(hist)
-            ma50  = float(hist.rolling(50).mean().iloc[-1])
-            ma200 = float(hist.rolling(min(200, len(hist))).mean().iloc[-1])
-
-            zona_min = info['zona_min']
-            zona_max = info['zona_max']
-            stop     = info['stop']
-            target   = info['target']
-
-            risco    = cur - stop
-            retorno  = target - cur
-            rr       = retorno / risco if risco > 0 else 0
-            pct_stop = ((stop - cur) / cur) * 100
-            pct_tgt  = ((target - cur) / cur) * 100
-
-            in_zone = zona_min <= cur <= zona_max
-            print(f'  {ticker}: {fmt_usd(cur)} | zona [{fmt_usd(zona_min)}–{fmt_usd(zona_max)}] | RSI {rsi_v:.0f} | {"✅ NA ZONA" if in_zone else "fora"}')
-
-            if not in_zone:
-                state.pop(ticker, None)
-                continue
-
-            # Deduplication: 1 alerta por ticker por dia
-            if state.get(ticker, {}).get('date') == today:
-                print(f'  ⏭️  {ticker}: alerta já enviado hoje')
-                continue
-
-            # Analyst data
-            rec_raw = ''; target_anal = None; num_anal = 0
-            try:
-                yi          = yf.Ticker(ticker).info
-                target_anal = yi.get('targetMeanPrice')
-                rec_raw     = yi.get('recommendationKey', '')
-                num_anal    = yi.get('numberOfAnalystOpinions', 0)
-            except:
-                pass
-
-            # ── SCORING (máx 8 pontos) ────────────────────────────────────
-            score  = 0
-            pontos = []
-
-            if rsi_v < 35:
-                score += 2
-                pontos.append(f'RSI {rsi_v:.0f} — sobrevenda técnica confirmada ✓✓')
-            elif rsi_v < 50:
-                score += 1
-                pontos.append(f'RSI {rsi_v:.0f} — momentum baixo, favorável para entrada ✓')
-            else:
-                pontos.append(f'RSI {rsi_v:.0f} — sem sobrevenda técnica (neutro)')
-
-            if cur > ma200:
-                score += 1
-                pontos.append(f'Acima da MA200 ({fmt_usd(ma200)}) — tendência longa positiva ✓')
-            else:
-                pontos.append(f'Abaixo da MA200 ({fmt_usd(ma200)}) — tendência longa negativa ⚠️')
-
-            if cur < ma50:
-                score += 1
-                pontos.append(f'Abaixo da MA50 ({fmt_usd(ma50)}) — pullback claro na tendência ✓')
-            else:
-                pontos.append(f'Acima da MA50 ({fmt_usd(ma50)}) — sem pullback técnico')
-
-            zone_pct = (cur - zona_min) / (zona_max - zona_min) * 100 if zona_max > zona_min else 50
-            if zone_pct <= 30:
-                score += 1
-                pontos.append(f'Na faixa inferior da zona ({zone_pct:.0f}%) — ponto ótimo de entrada ✓')
-            elif zone_pct <= 65:
-                pontos.append(f'Na faixa média da zona ({zone_pct:.0f}%) — entrada razoável')
-            else:
-                pontos.append(f'Na faixa superior da zona ({zone_pct:.0f}%) — aguardar pullback se possível')
-
-            if rr >= 3:
-                score += 2
-                pontos.append(f'R/R {rr:.1f}:1 — risco/retorno excelente ✓✓')
-            elif rr >= 2:
-                score += 1
-                pontos.append(f'R/R {rr:.1f}:1 — risco/retorno bom ✓')
-            else:
-                pontos.append(f'R/R {rr:.1f}:1 — risco/retorno fraco (preço alto na zona)')
-
-            if rec_raw in ('strong_buy', 'buy') and num_anal >= 3:
-                score += 1
-                upside_a = ((target_anal - cur) / cur * 100) if target_anal else 0
-                pontos.append(f'Analistas: {rec_raw.replace("_"," ").upper()} ({num_anal}) | alvo {fmt_usd(target_anal)} ({fmt_pct(upside_a)}) ✓')
-            elif target_anal and num_anal > 0:
-                pontos.append(f'Analistas: {rec_raw or "neutro"} ({num_anal}) | alvo {fmt_usd(target_anal)}')
-            else:
-                pontos.append('Analistas: sem cobertura suficiente')
-
-            # ── VEREDICTO ─────────────────────────────────────────────────
-            if score >= 6:
-                verdict   = '🟢 ENTRADA FORTE'
-                descricao = 'Múltiplos sinais técnicos e fundamentais alinhados. Alta convicção.'
-                priority  = 'urgent'
-                tags      = 'green_circle,moneybag'
-            elif score >= 4:
-                verdict   = '🟡 ENTRADA MODERADA'
-                descricao = 'Zona válida com suporte técnico parcial. Bom ponto, mas monitore.'
-                priority  = 'high'
-                tags      = 'yellow_circle,eyes'
-            elif score >= 2:
-                verdict   = '🔵 ZONA ATINGIDA'
-                descricao = 'Preço na zona, porém sinais técnicos mistos. Aguarde confirmação.'
-                priority  = 'default'
-                tags      = 'blue_circle,eyes'
-            else:
-                verdict   = '⚪ ZONA ATINGIDA (sinais fracos)'
-                descricao = 'Preço na zona mas sem confirmação técnica. Cautela recomendada.'
-                priority  = 'low'
-                tags      = 'white_circle'
-
-            linha = '━━━━━━━━━━━━━━━━━━━━━━━━'
-            body  = (
-                f'{verdict}\n{descricao}\n{linha}\n'
-                f'{ticker} — {info["nome"]}\n'
-                f'Tese: {info["tese"]}\n\n'
-                f'Preço atual:  {fmt_usd(cur)} ({fmt_pct(daily)} hoje)\n'
-                f'Zona entrada: {fmt_usd(zona_min)} – {fmt_usd(zona_max)}\n'
-                f'Stop loss:    {fmt_usd(stop)} (risco {fmt_pct(pct_stop)})\n'
-                f'Target:       {fmt_usd(target)} (potencial {fmt_pct(pct_tgt)})\n'
-                f'R/R:          {rr:.1f}:1\n\n'
-                f'📊 ANÁLISE TÉCNICA ({score}/8 pontos):\n'
-            )
-            for i, p in enumerate(pontos, 1):
-                body += f'  {i}. {p}\n'
-            body += (
-                f'\n{DASHBOARD}\n'
-                f'⚠️ Análise automatizada. Não é recomendação de investimento.'
-            )
-
-            alert(f'👀 {ticker} na zona — {verdict}', body, priority=priority, tags=tags)
-            print(f'  ✅ {ticker}: alerta enviado | score {score}/8 | R/R {rr:.1f}:1')
-            state[ticker] = {'date': today, 'score': score, 'price': round(cur, 2)}
-
-        except Exception as e:
-            print(f'  ❌ {ticker}: {e}')
-
-    save_wl_state(state)
 
 # ── ANÁLISE BRASIL ─────────────────────────────────────────────────────────────
 def analyze_br():
@@ -782,7 +588,6 @@ if __name__ == '__main__':
 
     write_prices(usd_brl)
     morning_summary(usd_brl)
-    analyze_watchlist()
     analyze_us(usd_brl)
     analyze_br()
     analyze_crypto()
