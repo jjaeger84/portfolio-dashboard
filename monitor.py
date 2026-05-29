@@ -441,8 +441,8 @@ def morning_summary(usd_brl):
 # ── CDB / RENDA FIXA ──────────────────────────────────────────────────────────
 # Valores base capturados em 25/05/2026 — acumulam CDI diariamente a partir daí
 CDB_BASE = {
-    'santander': {'valor': 124765.20, 'data_base': '25/05/2026'},
-    'ion':       {'valor': 152593.89, 'data_base': '25/05/2026'},
+    'santander': {'valor': 152920.10, 'data_base': '29/05/2026'},
+    'ion':       {'valor': 122522.45, 'data_base': '29/05/2026'},
 }
 
 def get_cdi_acumulado(data_inicio_str):
