@@ -1,5 +1,5 @@
 # CLAUDE.md — Parceiro de Investimentos: Jonas J
-**Versão:** 2.0 — Atualizado em 27/05/2026
+**Versão:** 4.0 — Atualizado em 29/05/2026
 **Conversa de origem:** Sessão completa de análise de portfólio + configuração de sistema
 
 ---
